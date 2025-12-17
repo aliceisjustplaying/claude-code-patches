@@ -159,7 +159,7 @@ case"thinking":
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.0.71 installed (also works with v2.0.62)
+- Claude Code v2.0.71 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -276,19 +276,6 @@ grep -n 'case"thinking":return b5.createElement(mn2' ~/.claude/local/node_module
 # Should show: case"thinking":return b5.createElement(mn2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});
 
 # Note: Patch 1 (banner removal) is deprecated in v2.0.71 - no longer needed
-```
-
-For v2.0.62:
-```bash
-# Check ZT2 patch
-grep -n "function ZT2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should show: function ZT2({streamMode:A}){return null}
-
-# Check thinking visibility patch
-grep -n 'case"thinking":return J3.createElement(X59' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should show: case"thinking":return J3.createElement(X59,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});
 ```
 
 ## Troubleshooting
@@ -475,7 +462,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.0.71 (also supports v2.0.62)
+4. **Version-specific:** Patterns are specific to v2.0.71
 
 ## Feature Request
 
