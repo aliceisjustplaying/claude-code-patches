@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.0.62');
+  console.log('Claude Code Thinking Visibility Patcher v2.0.71');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.0.62');
+console.log('Claude Code Thinking Visibility Patcher v2.0.71');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,15 +176,17 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Patch 1: ZT2 Banner Removal (v2.0.62)
-// Note: Changed from RR2 (v2.0.61) to ZT2 (v2.0.62), rTA/GP namespaces, P container
+// Patch 1: Banner Removal (DEPRECATED in v2.0.71)
+// In v2.0.71, the separate banner function (ZT2 in v2.0.62) was removed.
+// The "Thought for X seconds" message no longer exists - banner is now integrated into mn2.
+// This patch is kept for backwards compatibility with older versions.
 const bannerSearchPattern = 'function ZT2({streamMode:A}){let[Q,B]=rTA.useState(null),[G,Z]=rTA.useState(null);if(rTA.useEffect(()=>{if(A==="thinking"&&Q===null)B(Date.now());else if(A!=="thinking"&&Q!==null)Z(Date.now()-Q),B(null)},[A,Q]),A==="thinking")return GP.createElement(P,{marginTop:1},GP.createElement($,{dimColor:!0},"∴ Thinking…"));if(G!==null)return GP.createElement(P,{marginTop:1},GP.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(G/1000)),"s (",GP.createElement($,{dimColor:!0,bold:!0},"ctrl+o")," ","to show thinking)"));return null}';
 const bannerReplacement = 'function ZT2({streamMode:A}){return null}';
 
-// Patch 2: Thinking Visibility (v2.0.62)
-// Note: Changed from T69 (v2.0.61) to X59 (v2.0.62), A3 to J3
-const thinkingSearchPattern = 'case"thinking":if(!F&&!G)return null;return J3.createElement(X59,{addMargin:Q,param:A,isTranscriptMode:F,verbose:G});';
-const thinkingReplacement = 'case"thinking":return J3.createElement(X59,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});';
+// Patch 2: Thinking Visibility (v2.0.71)
+// Note: Changed from X59 (v2.0.62) to mn2 (v2.0.71), J3 to b5, F to H
+const thinkingSearchPattern = 'case"thinking":if(!H&&!G)return null;return b5.createElement(mn2,{addMargin:Q,param:A,isTranscriptMode:H,verbose:G});';
+const thinkingReplacement = 'case"thinking":return b5.createElement(mn2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});';
 
 let patch1Applied = false;
 let patch2Applied = false;
@@ -192,14 +194,14 @@ let patch2Applied = false;
 // Check if patches can be applied
 console.log('Checking patches...\n');
 
-console.log('Patch 1: ZT2 banner removal');
+console.log('Patch 1: Banner removal (deprecated in v2.0.71)');
 if (content.includes(bannerSearchPattern)) {
   patch1Applied = true;
   console.log('  ✅ Pattern found - ready to apply');
 } else if (content.includes(bannerReplacement)) {
   console.log('  ⚠️  Already applied');
 } else {
-  console.log('  ❌ Pattern not found - may need update for newer version');
+  console.log('  ℹ️  Not applicable (banner integrated into thinking component in v2.0.71+)');
 }
 
 console.log('\nPatch 2: Thinking visibility');
@@ -245,7 +247,7 @@ console.log('\nApplying patches...');
 // Apply Patch 1
 if (patch1Applied) {
   content = content.replace(bannerSearchPattern, bannerReplacement);
-  console.log('✅ Patch 1 applied: ZT2 function now returns null');
+  console.log('✅ Patch 1 applied: Banner function now returns null');
 }
 
 // Apply Patch 2

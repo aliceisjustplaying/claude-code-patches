@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.0.62 (Updated 2025-12-09)
+**Current Version:** Claude Code 2.0.71 (Updated 2025-12-17)
 
 ## Quick Start
 
@@ -108,6 +108,7 @@ function GkQ({streamMode:A}){return null}
 - v2.0.59: Renamed to `DO2`, uses `MP.createElement`, `CRA.useState`
 - v2.0.61: Renamed to `RR2`, uses `rj.createElement`, `vTA.useState`, `P` container
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
+- v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
 ### Patch 2: Force Thinking Visibility (v2.0.46)
 **Before:**
@@ -153,11 +154,12 @@ case"thinking":
 - v2.0.59: Changed to `F89` component, `u3` variable, checks `K` and `G`
 - v2.0.61: Changed to `T69` component, `A3` variable, checks `F` and `G`
 - v2.0.62: Changed to `X59` component, `J3` variable, checks `F` and `G`
+- v2.0.71: Changed to `mn2` component, `b5` variable, checks `H` and `G`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.0.62 installed
+- Claude Code v2.0.71 installed (also works with v2.0.62)
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -265,8 +267,18 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patches are applied (for v2.0.62):
+Check if patches are applied (for v2.0.71):
 
+```bash
+# Check thinking visibility patch (v2.0.71)
+grep -n 'case"thinking":return b5.createElement(mn2' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+
+# Should show: case"thinking":return b5.createElement(mn2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});
+
+# Note: Patch 1 (banner removal) is deprecated in v2.0.71 - no longer needed
+```
+
+For v2.0.62:
 ```bash
 # Check ZT2 patch
 grep -n "function ZT2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
@@ -452,15 +464,18 @@ The minified code patterns change with each Claude Code update:
 | 2.0.59  | `DO2`          | `F89`     | `K,G` check |
 | 2.0.61  | `RR2`          | `T69`     | `F,G` check |
 | 2.0.62  | `ZT2`          | `X59`     | `F,G` check |
+| 2.0.71  | *deprecated*   | `mn2`     | `H,G` check |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
+
+**Note on v2.0.71:** The separate banner function was removed. The "Thought for X seconds" message no longer exists - the banner functionality was integrated into the `mn2` thinking component. Only Patch 2 (visibility) is needed for v2.0.71+.
 
 ## Limitations
 
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.0.62
+4. **Version-specific:** Patterns are specific to v2.0.71 (also supports v2.0.62)
 
 ## Feature Request
 
@@ -678,8 +693,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2025-12-09
-**Claude Code Version:** 2.0.62
+**Last Updated:** 2025-12-17
+**Claude Code Version:** 2.0.71
 **Status:** ✅ Working
 
 ### Quick Reference
