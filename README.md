@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.0.71 (Updated 2025-12-17)
+**Current Version:** Claude Code 2.0.73 (Updated 2025-12-19)
 
 ## Quick Start
 
@@ -155,11 +155,12 @@ case"thinking":
 - v2.0.61: Changed to `T69` component, `A3` variable, checks `F` and `G`
 - v2.0.62: Changed to `X59` component, `J3` variable, checks `F` and `G`
 - v2.0.71: Changed to `mn2` component, `b5` variable, checks `H` and `G`
+- v2.0.73: Changed to `Gt2` component, `J5` variable, checks `D` and `Z`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.0.71 installed
+- Claude Code v2.0.73 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -267,15 +268,15 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patches are applied (for v2.0.71):
+Check if patches are applied (for v2.0.73):
 
 ```bash
-# Check thinking visibility patch (v2.0.71)
-grep -n 'case"thinking":return b5.createElement(mn2' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.0.73)
+grep -n 'case"thinking":return J5.createElement(Gt2' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: case"thinking":return b5.createElement(mn2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});
+# Should show: case"thinking":return J5.createElement(Gt2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z});
 
-# Note: Patch 1 (banner removal) is deprecated in v2.0.71 - no longer needed
+# Note: Patch 1 (banner removal) is deprecated in v2.0.71+ - no longer needed
 ```
 
 ## Troubleshooting
@@ -452,6 +453,7 @@ The minified code patterns change with each Claude Code update:
 | 2.0.61  | `RR2`          | `T69`     | `F,G` check |
 | 2.0.62  | `ZT2`          | `X59`     | `F,G` check |
 | 2.0.71  | *deprecated*   | `mn2`     | `H,G` check |
+| 2.0.73  | *deprecated*   | `Gt2`     | `D,Z` check |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -462,7 +464,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.0.71
+4. **Version-specific:** Patterns are specific to v2.0.73
 
 ## Feature Request
 
@@ -680,8 +682,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2025-12-17
-**Claude Code Version:** 2.0.71
+**Last Updated:** 2025-12-19
+**Claude Code Version:** 2.0.73
 **Status:** ✅ Working
 
 ### Quick Reference
