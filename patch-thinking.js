@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.0.73');
+  console.log('Claude Code Thinking Visibility Patcher v2.0.75');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.0.73');
+console.log('Claude Code Thinking Visibility Patcher v2.0.75');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,11 +176,11 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking Visibility Patch (v2.0.73)
+// Thinking Visibility Patch (v2.0.75)
 // Forces thinking content to always render by setting isTranscriptMode to true
 // Note: In v2.0.71+, the separate banner function was removed - only this patch is needed
-const thinkingSearchPattern = 'case"thinking":if(!D&&!Z)return null;return J5.createElement(Gt2,{addMargin:Q,param:A,isTranscriptMode:D,verbose:Z});';
-const thinkingReplacement = 'case"thinking":return J5.createElement(Gt2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z});';
+const thinkingSearchPattern = 'case"thinking":if(!D&&!Z)return null;return J5.createElement(co2,{addMargin:Q,param:A,isTranscriptMode:D,verbose:Z});';
+const thinkingReplacement = 'case"thinking":return J5.createElement(co2,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z});';
 
 let patchApplied = false;
 
