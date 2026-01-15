@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.6 (Updated 2026-01-13)
+**Current Version:** Claude Code 2.1.7 (Updated 2026-01-15)
 
 ## Quick Start
 
@@ -160,11 +160,12 @@ case"thinking":
 - v2.0.76: Changed to `lo2` component, `J5` variable, checks `D` and `Z`
 - v2.1.2: Changed to `ybA` component, `o8` variable, checks `F` and `Z`, added `hideInTranscript` property
 - v2.1.6: Changed to `_bA` component, `Z5` variable, checks `F` and `Z`
+- v2.1.7: Changed to `gkA` component, `K5` variable, checks `F` and `Z`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.6 installed
+- Claude Code v2.1.7 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -272,13 +273,13 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.6):
+Check if patch is applied (for v2.1.7):
 
 ```bash
-# Check thinking visibility patch (v2.1.6)
-grep -n 'case"thinking":{return Z5.createElement(_bA' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.7)
+grep -n 'case"thinking":{return K5.createElement(gkA' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: case"thinking":{return Z5.createElement(_bA,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z,hideInTranscript:!1})}
+# Should show: case"thinking":{return K5.createElement(gkA,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z,hideInTranscript:!1})}
 
 # Note: Banner removal patch is deprecated in v2.0.71+ - no longer needed
 ```
@@ -462,6 +463,7 @@ The minified code patterns change with each Claude Code update:
 | 2.0.76  | *deprecated*   | `lo2`     | `D,Z` check |
 | 2.1.2   | *deprecated*   | `ybA`     | `F,Z` check + `hideInTranscript` |
 | 2.1.6   | *deprecated*   | `_bA`     | `F,Z` check |
+| 2.1.7   | *deprecated*   | `gkA`     | `F,Z` check |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -472,7 +474,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.6
+4. **Version-specific:** Patterns are specific to v2.1.7
 
 ## Feature Request
 
@@ -690,8 +692,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-01-13
-**Claude Code Version:** 2.1.6
+**Last Updated:** 2026-01-15
+**Claude Code Version:** 2.1.7
 **Status:** ✅ Working
 
 ### Quick Reference
