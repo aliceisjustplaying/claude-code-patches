@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.12');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.17');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.12');
+console.log('Claude Code Thinking Visibility Patcher v2.1.17');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,12 +176,13 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking Visibility Patch (v2.1.12)
+// Thinking Visibility Patch (v2.1.17)
 // Forces thinking content to always render by setting isTranscriptMode to true
 // Note: In v2.0.71+, the separate banner function was removed - only this patch is needed
 // Note: In v2.1.2+, hideInTranscript property was added - we set it to false to always show
-const thinkingSearchPattern = 'case"thinking":{if(!F&&!Z)return null;return N3.createElement(WkA,{addMargin:Q,param:A,isTranscriptMode:F,verbose:Z,hideInTranscript:F&&!(!C||z===C)})}';
-const thinkingReplacement = 'case"thinking":{return N3.createElement(WkA,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z,hideInTranscript:!1})}';
+// Note: In v2.1.17+, React memo cache is used for memoization
+const thinkingSearchPattern = 'case"thinking":{if(!D&&!H)return null;let T=D&&!(!P||f===P),k;if(K[22]!==Y||K[23]!==D||K[24]!==q||K[25]!==T||K[26]!==H)k=Y9.createElement(YW1,{addMargin:Y,param:q,isTranscriptMode:D,verbose:H,hideInTranscript:T}),K[22]=Y,K[23]=D,K[24]=q,K[25]=T,K[26]=H,K[27]=k;else k=K[27];return k}';
+const thinkingReplacement = 'case"thinking":{let T=!1,k;if(K[22]!==Y||K[23]!==!0||K[24]!==q||K[25]!==T||K[26]!==H)k=Y9.createElement(YW1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1}),K[22]=Y,K[23]=!0,K[24]=q,K[25]=T,K[26]=H,K[27]=k;else k=K[27];return k}';
 
 let patchApplied = false;
 
