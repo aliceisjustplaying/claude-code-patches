@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.17');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.19');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.17');
+console.log('Claude Code Thinking Visibility Patcher v2.1.19');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,13 +176,13 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking Visibility Patch (v2.1.17)
+// Thinking Visibility Patch (v2.1.19)
 // Forces thinking content to always render by setting isTranscriptMode to true
 // Note: In v2.0.71+, the separate banner function was removed - only this patch is needed
 // Note: In v2.1.2+, hideInTranscript property was added - we set it to false to always show
 // Note: In v2.1.17+, React memo cache is used for memoization
-const thinkingSearchPattern = 'case"thinking":{if(!D&&!H)return null;let T=D&&!(!P||f===P),k;if(K[22]!==Y||K[23]!==D||K[24]!==q||K[25]!==T||K[26]!==H)k=Y9.createElement(YW1,{addMargin:Y,param:q,isTranscriptMode:D,verbose:H,hideInTranscript:T}),K[22]=Y,K[23]=D,K[24]=q,K[25]=T,K[26]=H,K[27]=k;else k=K[27];return k}';
-const thinkingReplacement = 'case"thinking":{let T=!1,k;if(K[22]!==Y||K[23]!==!0||K[24]!==q||K[25]!==T||K[26]!==H)k=Y9.createElement(YW1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1}),K[22]=Y,K[23]=!0,K[24]=q,K[25]=T,K[26]=H,K[27]=k;else k=K[27];return k}';
+const thinkingSearchPattern = 'case"thinking":{if(!D&&!H&&!T)return null;let R=D&&!(!V||P===V)&&!T,x;if(K[23]!==Y||K[24]!==D||K[25]!==q||K[26]!==R||K[27]!==H)x=H9.createElement(oG1,{addMargin:Y,param:q,isTranscriptMode:D,verbose:H,hideInTranscript:R}),K[23]=Y,K[24]=D,K[25]=q,K[26]=R,K[27]=H,K[28]=x;else x=K[28];return x}';
+const thinkingReplacement = 'case"thinking":{let R=!1,x;if(K[23]!==Y||K[24]!==!0||K[25]!==q||K[26]!==R||K[27]!==H)x=H9.createElement(oG1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1}),K[23]=Y,K[24]=!0,K[25]=q,K[26]=R,K[27]=H,K[28]=x;else x=K[28];return x}';
 
 let patchApplied = false;
 
