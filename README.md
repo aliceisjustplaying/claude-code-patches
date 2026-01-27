@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.7 (Updated 2026-01-15)
+**Current Version:** Claude Code 2.1.20 (Updated 2026-01-27)
 
 ## Quick Start
 
@@ -161,11 +161,15 @@ case"thinking":
 - v2.1.2: Changed to `ybA` component, `o8` variable, checks `F` and `Z`, added `hideInTranscript` property
 - v2.1.6: Changed to `_bA` component, `Z5` variable, checks `F` and `Z`
 - v2.1.7: Changed to `gkA` component, `K5` variable, checks `F` and `Z`
+- v2.1.12: Changed to `fI1` component, `H9` variable, checks `D` and `H`, added `T` check, uses React memo cache
+- v2.1.17: Changed to `oG1` component, `H9` variable, checks `D`, `H`, and `T`
+- v2.1.19: Changed to `oG1` component (unchanged), variable `x`, checks `D`, `H`, and `T`
+- v2.1.20: Changed to `Ej1` component, variable `b`, checks `D`, `H`, and `T`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.7 installed
+- Claude Code v2.1.20 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -273,13 +277,13 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.7):
+Check if patch is applied (for v2.1.20):
 
 ```bash
-# Check thinking visibility patch (v2.1.7)
-grep -n 'case"thinking":{return K5.createElement(gkA' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.20)
+grep -n 'isTranscriptMode:!0,verbose:H,hideInTranscript:!1' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: case"thinking":{return K5.createElement(gkA,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z,hideInTranscript:!1})}
+# Should show a match with the patched thinking case
 
 # Note: Banner removal patch is deprecated in v2.0.71+ - no longer needed
 ```
@@ -464,6 +468,10 @@ The minified code patterns change with each Claude Code update:
 | 2.1.2   | *deprecated*   | `ybA`     | `F,Z` check + `hideInTranscript` |
 | 2.1.6   | *deprecated*   | `_bA`     | `F,Z` check |
 | 2.1.7   | *deprecated*   | `gkA`     | `F,Z` check |
+| 2.1.12  | *deprecated*   | `fI1`     | `D,H,T` check + memo cache |
+| 2.1.17  | *deprecated*   | `oG1`     | `D,H,T` check |
+| 2.1.19  | *deprecated*   | `oG1`     | `D,H,T` check |
+| 2.1.20  | *deprecated*   | `Ej1`     | `D,H,T` check |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -474,7 +482,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.7
+4. **Version-specific:** Patterns are specific to v2.1.20
 
 ## Feature Request
 
@@ -692,8 +700,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-01-15
-**Claude Code Version:** 2.1.7
+**Last Updated:** 2026-01-27
+**Claude Code Version:** 2.1.20
 **Status:** ✅ Working
 
 ### Quick Reference
