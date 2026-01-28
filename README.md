@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.20 (Updated 2026-01-27)
+**Current Version:** Claude Code 2.1.22 (Updated 2026-01-28)
 
 ## Quick Start
 
@@ -164,12 +164,13 @@ case"thinking":
 - v2.1.12: Changed to `fI1` component, `H9` variable, checks `D` and `H`, added `T` check, uses React memo cache
 - v2.1.17: Changed to `oG1` component, `H9` variable, checks `D`, `H`, and `T`
 - v2.1.19: Changed to `oG1` component (unchanged), variable `x`, checks `D`, `H`, and `T`
-- v2.1.20: Changed to `Ej1` component, variable `b`, checks `D`, `H`, and `T`
+- v2.1.20: Changed to `Ej1` component, `H9.createElement` variable, checks `D`, `H`, and `T`
+- v2.1.22: Changed to `iM1` component, `Y9.createElement` variable, checks `D`, `H`, and `T`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.20 installed
+- Claude Code v2.1.22 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -277,11 +278,11 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.20):
+Check if patch is applied (for v2.1.22):
 
 ```bash
-# Check thinking visibility patch (v2.1.20)
-grep -n 'isTranscriptMode:!0,verbose:H,hideInTranscript:!1' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.22)
+grep -n 'Y9.createElement(iM1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
 
@@ -471,7 +472,8 @@ The minified code patterns change with each Claude Code update:
 | 2.1.12  | *deprecated*   | `fI1`     | `D,H,T` check + memo cache |
 | 2.1.17  | *deprecated*   | `oG1`     | `D,H,T` check |
 | 2.1.19  | *deprecated*   | `oG1`     | `D,H,T` check |
-| 2.1.20  | *deprecated*   | `Ej1`     | `D,H,T` check |
+| 2.1.20  | *deprecated*   | `Ej1`     | `D,H,T` check, `H9.createElement` |
+| 2.1.22  | *deprecated*   | `iM1`     | `D,H,T` check, `Y9.createElement` |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -482,7 +484,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.20
+4. **Version-specific:** Patterns are specific to v2.1.22
 
 ## Feature Request
 
@@ -700,8 +702,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-01-27
-**Claude Code Version:** 2.1.20
+**Last Updated:** 2026-01-28
+**Claude Code Version:** 2.1.22
 **Status:** ✅ Working
 
 ### Quick Reference

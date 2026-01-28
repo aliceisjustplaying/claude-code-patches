@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.20');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.22');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.20');
+console.log('Claude Code Thinking Visibility Patcher v2.1.22');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,13 +176,14 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking Visibility Patch (v2.1.20)
+// Thinking Visibility Patch (v2.1.22)
 // Forces thinking content to always render by setting isTranscriptMode to true
 // Note: In v2.0.71+, the separate banner function was removed - only this patch is needed
 // Note: In v2.1.2+, hideInTranscript property was added - we set it to false to always show
 // Note: In v2.1.17+, React memo cache is used for memoization
-const thinkingSearchPattern = 'case"thinking":{if(!D&&!H&&!T)return null;let R=D&&!(!V||P===V)&&!T,b;if(K[23]!==Y||K[24]!==D||K[25]!==q||K[26]!==R||K[27]!==H)b=H9.createElement(Ej1,{addMargin:Y,param:q,isTranscriptMode:D,verbose:H,hideInTranscript:R}),K[23]=Y,K[24]=D,K[25]=q,K[26]=R,K[27]=H,K[28]=b;else b=K[28];return b}';
-const thinkingReplacement = 'case"thinking":{let R=!1,b;if(K[23]!==Y||K[24]!==!0||K[25]!==q||K[26]!==R||K[27]!==H)b=H9.createElement(Ej1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1}),K[23]=Y,K[24]=!0,K[25]=q,K[26]=R,K[27]=H,K[28]=b;else b=K[28];return b}';
+// Note: In v2.1.22, minified variable names changed: H9->Y9, Ej1->iM1
+const thinkingSearchPattern = 'case"thinking":{if(!D&&!H&&!T)return null;let R=D&&!(!V||P===V)&&!T,b;if(K[23]!==Y||K[24]!==D||K[25]!==q||K[26]!==R||K[27]!==H)b=Y9.createElement(iM1,{addMargin:Y,param:q,isTranscriptMode:D,verbose:H,hideInTranscript:R}),K[23]=Y,K[24]=D,K[25]=q,K[26]=R,K[27]=H,K[28]=b;else b=K[28];return b}';
+const thinkingReplacement = 'case"thinking":{let R=!1,b;if(K[23]!==Y||K[24]!==!0||K[25]!==q||K[26]!==R||K[27]!==H)b=Y9.createElement(iM1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1}),K[23]=Y,K[24]=!0,K[25]=q,K[26]=R,K[27]=H,K[28]=b;else b=K[28];return b}';
 
 let patchApplied = false;
 
