@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.22');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.31');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.22');
+console.log('Claude Code Thinking Visibility Patcher v2.1.31');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,14 +176,15 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking Visibility Patch (v2.1.22)
+// Thinking Visibility Patch (v2.1.31)
 // Forces thinking content to always render by setting isTranscriptMode to true
 // Note: In v2.0.71+, the separate banner function was removed - only this patch is needed
 // Note: In v2.1.2+, hideInTranscript property was added - we set it to false to always show
 // Note: In v2.1.17+, React memo cache is used for memoization
 // Note: In v2.1.22, minified variable names changed: H9->Y9, Ej1->iM1
-const thinkingSearchPattern = 'case"thinking":{if(!D&&!H&&!T)return null;let R=D&&!(!V||P===V)&&!T,b;if(K[23]!==Y||K[24]!==D||K[25]!==q||K[26]!==R||K[27]!==H)b=Y9.createElement(iM1,{addMargin:Y,param:q,isTranscriptMode:D,verbose:H,hideInTranscript:R}),K[23]=Y,K[24]=D,K[25]=q,K[26]=R,K[27]=H,K[28]=b;else b=K[28];return b}';
-const thinkingReplacement = 'case"thinking":{let R=!1,b;if(K[23]!==Y||K[24]!==!0||K[25]!==q||K[26]!==R||K[27]!==H)b=Y9.createElement(iM1,{addMargin:Y,param:q,isTranscriptMode:!0,verbose:H,hideInTranscript:!1}),K[23]=Y,K[24]=!0,K[25]=q,K[26]=R,K[27]=H,K[28]=b;else b=K[28];return b}';
+// Note: In v2.1.31, verbose parameter removed, variable names changed: Y9->K9, iM1->_j6, D->j, H removed, T->V (meaning changed), K[23]->q[21], etc.
+const thinkingSearchPattern = 'case"thinking":{if(!j&&!V)return null;let T=j&&!(!G||P===G)&&!V,k;if(q[21]!==Y||q[22]!==j||q[23]!==K||q[24]!==T)k=K9.createElement(_j6,{addMargin:Y,param:K,isTranscriptMode:j,hideInTranscript:T}),q[21]=Y,q[22]=j,q[23]=K,q[24]=T,q[25]=k;else k=q[25];return k}';
+const thinkingReplacement = 'case"thinking":{let T=!1,k;if(q[21]!==Y||q[22]!==!0||q[23]!==K||q[24]!==T)k=K9.createElement(_j6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1}),q[21]=Y,q[22]=!0,q[23]=K,q[24]=T,q[25]=k;else k=q[25];return k}';
 
 let patchApplied = false;
 
