@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.31');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.34');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.31');
+console.log('Claude Code Thinking Visibility Patcher v2.1.34');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -183,8 +183,9 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.17+, React memo cache is used for memoization
 // Note: In v2.1.22, minified variable names changed: H9->Y9, Ej1->iM1
 // Note: In v2.1.31, verbose parameter removed, variable names changed: Y9->K9, iM1->_j6, D->j, H removed, T->V (meaning changed), K[23]->q[21], etc.
-const thinkingSearchPattern = 'case"thinking":{if(!j&&!V)return null;let T=j&&!(!G||P===G)&&!V,k;if(q[21]!==Y||q[22]!==j||q[23]!==K||q[24]!==T)k=K9.createElement(_j6,{addMargin:Y,param:K,isTranscriptMode:j,hideInTranscript:T}),q[21]=Y,q[22]=j,q[23]=K,q[24]=T,q[25]=k;else k=q[25];return k}';
-const thinkingReplacement = 'case"thinking":{let T=!1,k;if(q[21]!==Y||q[22]!==!0||q[23]!==K||q[24]!==T)k=K9.createElement(_j6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1}),q[21]=Y,q[22]=!0,q[23]=K,q[24]=T,q[25]=k;else k=q[25];return k}';
+// Note: In v2.1.34, variable names changed: K9->I5, _j6->sD6, j->M, V->Z, G<->P swapped
+const thinkingSearchPattern = 'case"thinking":{if(!M&&!Z)return null;let T=M&&!(!P||G===P)&&!Z,k;if(q[21]!==Y||q[22]!==M||q[23]!==K||q[24]!==T)k=I5.createElement(sD6,{addMargin:Y,param:K,isTranscriptMode:M,hideInTranscript:T}),q[21]=Y,q[22]=M,q[23]=K,q[24]=T,q[25]=k;else k=q[25];return k}';
+const thinkingReplacement = 'case"thinking":{let T=!1,k;if(q[21]!==Y||q[22]!==!0||q[23]!==K||q[24]!==T)k=I5.createElement(sD6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1}),q[21]=Y,q[22]=!0,q[23]=K,q[24]=T,q[25]=k;else k=q[25];return k}';
 
 let patchApplied = false;
 
