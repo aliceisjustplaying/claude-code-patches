@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.39 (Updated 2026-02-11)
+**Current Version:** Claude Code 2.1.42 (Updated 2026-02-16)
 
 ## Quick Start
 
@@ -110,17 +110,17 @@ function GkQ({streamMode:A}){return null}
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 - v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
-### Patch 2: Force Thinking Visibility (v2.1.39)
+### Patch 2: Force Thinking Visibility (v2.1.42)
 **Before:**
 ```javascript
-case"thinking":{if(!j&&!Z)return null;let T=j&&!(!G||W===G)&&!Z,k;
-  ...k=F5.createElement(pM6,{addMargin:Y,param:K,isTranscriptMode:j,hideInTranscript:T})...
+case"thinking":{if(!D&&!Z)return null;let T=D&&!(!G||W===G)&&!Z,k;
+  ...k=F5.createElement(dW6,{addMargin:Y,param:K,isTranscriptMode:D,hideInTranscript:T})...
 ```
 
 **After:**
 ```javascript
 case"thinking":{let T=!1,k;
-  ...k=F5.createElement(pM6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1})...
+  ...k=F5.createElement(dW6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1})...
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
@@ -170,11 +170,12 @@ case"thinking":{let T=!1,k;
 - v2.1.34: Changed to `sD6` component, `I5.createElement` variable, checks `M` and `Z`
 - v2.1.37: Changed to `Mj6` component, `b5.createElement` variable, checks `j` and `Z`
 - v2.1.39: Changed to `pM6` component, `F5.createElement` variable, checks `j` and `Z`, memo indices shifted `q[22-26]`
+- v2.1.42: Changed to `dW6` component, `F5.createElement` variable, checks `D` and `Z`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.39 installed
+- Claude Code v2.1.42 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -282,11 +283,11 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.39):
+Check if patch is applied (for v2.1.42):
 
 ```bash
-# Check thinking visibility patch (v2.1.39)
-grep -n 'F5.createElement(pM6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.42)
+grep -n 'F5.createElement(dW6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
 
@@ -395,7 +396,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.39
+- **Version:** Claude Code 2.1.42
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -482,6 +483,7 @@ The minified code patterns change with each Claude Code update:
 | 2.1.34  | *deprecated*   | `sD6`     | `M,Z` check, `I5.createElement`, `q[21]` memo |
 | 2.1.37  | *deprecated*   | `Mj6`     | `j,Z` check, `b5.createElement`, `q[21]` memo |
 | 2.1.39  | *deprecated*   | `pM6`     | `j,Z` check, `F5.createElement`, `q[22]` memo |
+| 2.1.42  | *deprecated*   | `dW6`     | `D,Z` check, `F5.createElement`, `q[22]` memo |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -492,7 +494,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.39
+4. **Version-specific:** Patterns are specific to v2.1.42
 
 ## Feature Request
 
@@ -710,8 +712,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-02-11
-**Claude Code Version:** 2.1.39
+**Last Updated:** 2026-02-16
+**Claude Code Version:** 2.1.42
 **Status:** ✅ Working
 
 ### Quick Reference
