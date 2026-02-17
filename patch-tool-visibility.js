@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Tool Visibility Patcher v2.1.42');
+  console.log('Claude Code Tool Visibility Patcher v2.1.44');
   console.log('=============================================\n');
   console.log('Usage: node patch-tool-visibility.js [options]\n');
   console.log('Options:');
@@ -30,7 +30,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Tool Visibility Patcher v2.1.42');
+console.log('Claude Code Tool Visibility Patcher v2.1.44');
 console.log('=============================================\n');
 
 // Helper function to safely execute shell commands
@@ -179,17 +179,18 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Tool Visibility Patch (v2.1.42)
+// Tool Visibility Patch (v2.1.44)
 // Forces collapsed read/search tool groups to always render individual tool calls
 // instead of summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
-// This is achieved by forcing verbose:!0 in the collapsed_read_search renderer (yQ4)
+// This is achieved by forcing verbose:!0 in the collapsed_read_search renderer (SQ4)
 // so it always takes the verbose code path showing each tool call with file paths.
 // Note: In v2.1.42, the relevant variables in PyY are:
 //   F5=createElement namespace, yQ4=collapsed renderer component,
 //   A=message, H=inProgressToolUseIDs, O=shouldAnimate, w=verbose,
 //   Y=tools, q=lookups, M=isActiveGroup
-const toolVisSearchPattern = 'case"collapsed_read_search":return F5.createElement(yQ4,{message:A,inProgressToolUseIDs:H,shouldAnimate:O,verbose:w,tools:Y,lookups:q,isActiveGroup:M})';
-const toolVisReplacement = 'case"collapsed_read_search":return F5.createElement(yQ4,{message:A,inProgressToolUseIDs:H,shouldAnimate:O,verbose:!0,tools:Y,lookups:q,isActiveGroup:M})';
+// Note: In v2.1.44, collapsed renderer changed: yQ4->SQ4
+const toolVisSearchPattern = 'case"collapsed_read_search":return F5.createElement(SQ4,{message:A,inProgressToolUseIDs:H,shouldAnimate:O,verbose:w,tools:Y,lookups:q,isActiveGroup:M})';
+const toolVisReplacement = 'case"collapsed_read_search":return F5.createElement(SQ4,{message:A,inProgressToolUseIDs:H,shouldAnimate:O,verbose:!0,tools:Y,lookups:q,isActiveGroup:M})';
 
 let patchApplied = false;
 
