@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.44');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.56');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.44');
+console.log('Claude Code Thinking Visibility Patcher v2.1.56');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -187,8 +187,9 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.37, variable names changed: I5->b5, sD6->Mj6, M->j
 // Note: In v2.1.39, variable names changed: b5->F5, Mj6->pM6, P->G, G->W, memo indices shifted q[21-25]->q[22-26]
 // Note: In v2.1.42, variable names changed: pM6->dW6, j->D
-const thinkingSearchPattern = 'case"thinking":{if(!D&&!Z)return null;let T=D&&!(!G||W===G)&&!Z,k;if(q[22]!==Y||q[23]!==D||q[24]!==K||q[25]!==T)k=F5.createElement(dW6,{addMargin:Y,param:K,isTranscriptMode:D,hideInTranscript:T}),q[22]=Y,q[23]=D,q[24]=K,q[25]=T,q[26]=k;else k=q[26];return k}';
-const thinkingReplacement = 'case"thinking":{let T=!1,k;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==T)k=F5.createElement(dW6,{addMargin:Y,param:K,isTranscriptMode:!0,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=T,q[26]=k;else k=q[26];return k}';
+// Note: In v2.1.56, guard changed to 3 checks (!X&&!V&&!_), added verbose:_ prop, F5->g5, dW6->Kf1, memo now 6 slots q[22-27]
+const thinkingSearchPattern = 'case"thinking":{if(!X&&!V&&!_)return null;let N=X&&!(!Z||W===Z)&&!V,v;if(q[22]!==Y||q[23]!==X||q[24]!==K||q[25]!==N||q[26]!==_)v=g5.createElement(Kf1,{addMargin:Y,param:K,isTranscriptMode:X,verbose:_,hideInTranscript:N}),q[22]=Y,q[23]=X,q[24]=K,q[25]=N,q[26]=_,q[27]=v;else v=q[27];return v}';
+const thinkingReplacement = 'case"thinking":{let N=!1,v;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==N||q[26]!==_)v=g5.createElement(Kf1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=N,q[26]=_,q[27]=v;else v=q[27];return v}';
 
 let patchApplied = false;
 
