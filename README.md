@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.62 (Updated 2026-02-27)
+**Current Version:** Claude Code 2.1.63 (Updated 2026-03-02)
 
 ## Quick Start
 
@@ -110,17 +110,17 @@ function GkQ({streamMode:A}){return null}
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 - v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
-### Patch 2: Force Thinking Visibility (v2.1.62)
+### Patch 2: Force Thinking Visibility (v2.1.63)
 **Before:**
 ```javascript
-case"thinking":{if(!D&&!f&&!_)return null;let V=D&&!(!G||W===G)&&!f,v;
-  ...v=c5.createElement(jT1,{addMargin:Y,param:K,isTranscriptMode:D,verbose:_,hideInTranscript:V})...
+case"thinking":{if(!X&&!_)return null;let f=X&&!(!G||W===G),N;
+  ...N=U5.createElement(qN1,{addMargin:Y,param:K,isTranscriptMode:X,verbose:_,hideInTranscript:f})...
 ```
 
 **After:**
 ```javascript
-case"thinking":{let V=!1,v;
-  ...v=c5.createElement(jT1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1})...
+case"thinking":{let f=!1,N;
+  ...N=U5.createElement(qN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1})...
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
@@ -174,11 +174,12 @@ case"thinking":{let V=!1,v;
 - v2.1.56: Changed to `Kf1` component, `g5.createElement` variable, checks `X`, `V`, and `_`, added `verbose` prop, memo 6 slots `q[22-27]`
 - v2.1.59: Changed to `JT1` component, `c5.createElement` variable, checks `D`, `f`, and `_`
 - v2.1.62: Changed to `jT1` component (case change only), rest unchanged
+- v2.1.63: Changed to `qN1` component, `U5.createElement`, guard reverted to 2 checks (`X,_`), memo `q[21]` (5 slots)
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.62 installed
+- Claude Code v2.1.63 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -286,11 +287,11 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.62):
+Check if patch is applied (for v2.1.63):
 
 ```bash
-# Check thinking visibility patch (v2.1.62)
-grep -n 'c5.createElement(jT1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.63)
+grep -n 'U5.createElement(qN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
 
@@ -399,7 +400,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.62
+- **Version:** Claude Code 2.1.63
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -490,6 +491,7 @@ The minified code patterns change with each Claude Code update:
 | 2.1.56  | *deprecated*   | `Kf1`     | `X,V,_` check, `g5.createElement`, `q[22]` memo, `verbose` prop |
 | 2.1.59  | *deprecated*   | `JT1`     | `D,f,_` check, `c5.createElement`, `q[22]` memo |
 | 2.1.62  | *deprecated*   | `jT1`     | `D,f,_` check, `c5.createElement`, `q[22]` memo |
+| 2.1.63  | *deprecated*   | `qN1`     | `X,_` check (2 guards), `U5.createElement`, `q[21]` memo |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -500,7 +502,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.62
+4. **Version-specific:** Patterns are specific to v2.1.63
 
 ## Feature Request
 
@@ -718,8 +720,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-02-27
-**Claude Code Version:** 2.1.62
+**Last Updated:** 2026-03-02
+**Claude Code Version:** 2.1.63
 **Status:** ✅ Working
 
 ### Quick Reference

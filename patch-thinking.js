@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.62');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.63');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.62');
+console.log('Claude Code Thinking Visibility Patcher v2.1.63');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -190,8 +190,9 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.56, guard changed to 3 checks (!X&&!V&&!_), added verbose:_ prop, F5->g5, dW6->Kf1, memo now 6 slots q[22-27]
 // Note: In v2.1.59, variable names changed: g5->c5, Kf1->JT1, X->D, V->f, N->V, Z->G
 // Note: In v2.1.62, component name changed: JT1->jT1 (case change only)
-const thinkingSearchPattern = 'case"thinking":{if(!D&&!f&&!_)return null;let V=D&&!(!G||W===G)&&!f,v;if(q[22]!==Y||q[23]!==D||q[24]!==K||q[25]!==V||q[26]!==_)v=c5.createElement(jT1,{addMargin:Y,param:K,isTranscriptMode:D,verbose:_,hideInTranscript:V}),q[22]=Y,q[23]=D,q[24]=K,q[25]=V,q[26]=_,q[27]=v;else v=q[27];return v}';
-const thinkingReplacement = 'case"thinking":{let V=!1,v;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==V||q[26]!==_)v=c5.createElement(jT1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=V,q[26]=_,q[27]=v;else v=q[27];return v}';
+// Note: In v2.1.63, guard reverted to 2 checks (!X&&!_), c5->U5, jT1->qN1, V->f, v->N, D->X, memo q[22-27]->q[21-26] (5 slots)
+const thinkingSearchPattern = 'case"thinking":{if(!X&&!_)return null;let f=X&&!(!G||W===G),N;if(q[21]!==Y||q[22]!==X||q[23]!==K||q[24]!==f||q[25]!==_)N=U5.createElement(qN1,{addMargin:Y,param:K,isTranscriptMode:X,verbose:_,hideInTranscript:f}),q[21]=Y,q[22]=X,q[23]=K,q[24]=f,q[25]=_,q[26]=N;else N=q[26];return N}';
+const thinkingReplacement = 'case"thinking":{let f=!1,N;if(q[21]!==Y||q[22]!==!0||q[23]!==K||q[24]!==f||q[25]!==_)N=U5.createElement(qN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1}),q[21]=Y,q[22]=!0,q[23]=K,q[24]=f,q[25]=_,q[26]=N;else N=q[26];return N}';
 
 let patchApplied = false;
 
