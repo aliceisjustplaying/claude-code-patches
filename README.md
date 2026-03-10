@@ -24,16 +24,46 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 **Current Version:** Claude Code 2.1.69 (Updated 2026-03-05)
 
+## Required Setting (v2.1.64+)
+
+Starting in v2.1.64 (briefly reverted, permanent from v2.1.69), Claude Code sends a
+`redact-thinking-2026-02-12` beta header with every API request. This tells the API
+to **strip thinking text** from the response — thinking blocks still arrive with valid
+cryptographic signatures, but the `thinking` property is an empty string. The
+rendering patch is correct but has nothing to display.
+
+To disable this redaction, you **must** add the following to `~/.claude/settings.json`:
+
+```json
+{
+  "showThinkingSummaries": true
+}
+```
+
+This setting is **not documented** in the [official Claude Code settings docs](https://code.claude.com/docs/en/settings).
+Its internal schema description is *"Show thinking summaries in the transcript view
+(ctrl+o). Default: false."* — but what it actually controls is whether the API request
+includes the `redact-thinking` beta header. Without it, the API never sends thinking
+content to the client, and no client-side patch can make it visible.
+
+**Without this setting, the patch will apply cleanly but you will see no thinking
+content.** The patch script will warn you if the setting is missing.
+
+See also: [anthropics/claude-code#31326](https://github.com/anthropics/claude-code/issues/31326) — upstream bug report confirming thinking content is empty since v2.1.69.
+
 ## Quick Start
 
 ```bash
-# Clone or download this repository
+# 1. Enable thinking content from the API (required since v2.1.64)
+# Add "showThinkingSummaries": true to ~/.claude/settings.json
+
+# 2. Clone or download this repository
 cd claude-code-thinking
 
-# Run the patch script (automatically detects your installation)
+# 3. Run the patch script (automatically detects your installation)
 node patch-thinking.js
 
-# Restart Claude Code
+# 4. Restart Claude Code
 ```
 
 That's it! Thinking blocks now display inline without `ctrl+o`.
@@ -353,6 +383,17 @@ Searched using the following methods:
 ### Thinking Still Collapsed After Patching
 
 **Solution:** You must restart Claude Code for changes to take effect.
+
+### Patch Applied But No Thinking Content Visible
+
+**Cause (v2.1.64+):** Claude Code sends a `redact-thinking-2026-02-12` beta header
+that tells the API to strip thinking text from responses. The thinking blocks still
+exist (with valid signatures), but the `thinking` property is an empty string.
+
+**Solution:** Add `"showThinkingSummaries": true` to `~/.claude/settings.json` and
+restart Claude Code. See [Required Setting](#required-setting-v2164) above.
+
+See also: [anthropics/claude-code#31326](https://github.com/anthropics/claude-code/issues/31326)
 
 ### Backup File Missing
 

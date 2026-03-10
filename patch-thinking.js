@@ -193,8 +193,54 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.63, guard reverted to 2 checks (!X&&!_), c5->U5, jT1->qN1, V->f, v->N, D->X, memo q[22-27]->q[21-26] (5 slots)
 // Note: In v2.1.69, X->D, N->v, U5->d5, qN1->LN1, memo q[21-26]->q[22-27] (6 slots again)
 // Note: In v2.1.71, d5->o5, LN1->PL1, v->V, G->Z in hideInTranscript check
+//
+// IMPORTANT: redact-thinking beta header (v2.1.64+)
+// Starting in v2.1.64 (reverted in v2.1.66, re-introduced permanently in v2.1.69),
+// Claude Code sends a "redact-thinking-2026-02-12" beta header with API requests.
+// This tells the API to return thinking blocks with empty thinking text (signature
+// is preserved). The rendering patch works correctly but has nothing to display.
+// The header is added when ALL of these are true:
+//   1. Thinking is enabled
+//   2. Model supports interleaved thinking
+//   3. Not in verbose/transcript mode
+//   4. settings.showThinkingSummaries !== true (undefined counts as not true)
+//   5. Feature flag "tengu_quiet_hollow" is active (server-controlled)
+// Users MUST set "showThinkingSummaries": true in ~/.claude/settings.json to
+// prevent the redaction and allow this patch to actually display thinking content.
+// See: https://github.com/anthropics/claude-code/issues/31326
 const thinkingSearchPattern = 'case"thinking":{if(!D&&!_)return null;let f=D&&!(!Z||W===Z),V;if(q[22]!==Y||q[23]!==D||q[24]!==K||q[25]!==f||q[26]!==_)V=o5.createElement(PL1,{addMargin:Y,param:K,isTranscriptMode:D,verbose:_,hideInTranscript:f}),q[22]=Y,q[23]=D,q[24]=K,q[25]=f,q[26]=_,q[27]=V;else V=q[27];return V}';
 const thinkingReplacement = 'case"thinking":{let f=!1,V;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==f||q[26]!==_)V=o5.createElement(PL1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=f,q[26]=_,q[27]=V;else V=q[27];return V}';
+
+// Check if showThinkingSummaries is set in settings.json (required since v2.1.64)
+function checkShowThinkingSummaries() {
+  const settingsPaths = [
+    path.join(os.homedir(), '.claude', 'settings.json'),
+    path.join(os.homedir(), '.config', 'claude', 'settings.json'),
+  ];
+  for (const settingsPath of settingsPaths) {
+    try {
+      if (fs.existsSync(settingsPath)) {
+        const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+        if (settings.showThinkingSummaries === true) return true;
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+  }
+  return false;
+}
+
+const hasShowThinkingSummaries = checkShowThinkingSummaries();
+if (!hasShowThinkingSummaries) {
+  console.log('⚠️  WARNING: "showThinkingSummaries" is not set to true in ~/.claude/settings.json');
+  console.log('   Since v2.1.64, Claude Code sends a "redact-thinking" beta header that tells');
+  console.log('   the API to strip thinking text from responses. Without this setting, the');
+  console.log('   patch will apply but you will see NO thinking content.');
+  console.log('');
+  console.log('   Fix: Add to ~/.claude/settings.json:');
+  console.log('     "showThinkingSummaries": true');
+  console.log('');
+}
 
 let patchApplied = false;
 
