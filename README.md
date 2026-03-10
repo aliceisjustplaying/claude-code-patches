@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.69 (Updated 2026-03-05)
+**Current Version:** Claude Code 2.1.72 (Updated 2026-03-10)
 
 ## Required Setting (v2.1.64+)
 
@@ -140,17 +140,17 @@ function GkQ({streamMode:A}){return null}
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 - v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
-### Patch 2: Force Thinking Visibility (v2.1.69)
+### Patch 2: Force Thinking Visibility (v2.1.72)
 **Before:**
 ```javascript
-case"thinking":{if(!D&&!_)return null;let f=D&&!(!G||W===G),v;
-  ...v=d5.createElement(LN1,{addMargin:Y,param:K,isTranscriptMode:D,verbose:_,hideInTranscript:f})...
+case"thinking":{if(!D&&!w)return null;let f=D&&!(!Z||W===Z),v;
+  ...v=M5.createElement(gT1,{addMargin:Y,param:K,isTranscriptMode:D,verbose:w,hideInTranscript:f})...
 ```
 
 **After:**
 ```javascript
 case"thinking":{let f=!1,v;
-  ...v=d5.createElement(LN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1})...
+  ...v=M5.createElement(gT1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})...
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
@@ -206,11 +206,13 @@ case"thinking":{let f=!1,v;
 - v2.1.62: Changed to `jT1` component (case change only), rest unchanged
 - v2.1.63: Changed to `qN1` component, `U5.createElement`, guard reverted to 2 checks (`X,_`), memo `q[21]` (5 slots)
 - v2.1.69: Changed to `LN1` component, `d5.createElement`, checks `D,_`, memo `q[22]` (6 slots)
+- v2.1.71: Changed to `PL1` component, `o5.createElement`, checks `D,_`, `v→V`, `G→Z` in hideInTranscript
+- v2.1.72: Changed to `gT1` component, `M5.createElement`, checks `D,w`, `_→w` (verbose), `V→v` (memo temp)
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.69 installed
+- Claude Code v2.1.72 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -318,11 +320,11 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.69):
+Check if patch is applied (for v2.1.72):
 
 ```bash
-# Check thinking visibility patch (v2.1.69)
-grep -n 'd5.createElement(LN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:_,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.72)
+grep -n 'M5.createElement(gT1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
 
@@ -442,7 +444,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.69
+- **Version:** Claude Code 2.1.72
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -535,6 +537,8 @@ The minified code patterns change with each Claude Code update:
 | 2.1.62  | *deprecated*   | `jT1`     | `D,f,_` check, `c5.createElement`, `q[22]` memo |
 | 2.1.63  | *deprecated*   | `qN1`     | `X,_` check (2 guards), `U5.createElement`, `q[21]` memo |
 | 2.1.69  | *deprecated*   | `LN1`     | `D,_` check, `d5.createElement`, `q[22]` memo (6 slots) |
+| 2.1.71  | *deprecated*   | `PL1`     | `D,_` check, `o5.createElement`, `q[22]` memo |
+| 2.1.72  | *deprecated*   | `gT1`     | `D,w` check, `M5.createElement`, `q[22]` memo |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -545,7 +549,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.69
+4. **Version-specific:** Patterns are specific to v2.1.72
 
 ## Feature Request
 
@@ -763,8 +767,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-03-05
-**Claude Code Version:** 2.1.69
+**Last Updated:** 2026-03-10
+**Claude Code Version:** 2.1.72
 **Status:** ✅ Working
 
 ### Quick Reference
