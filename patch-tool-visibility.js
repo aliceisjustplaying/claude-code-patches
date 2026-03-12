@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Tool Visibility Patcher v2.1.72');
+  console.log('Claude Code Tool Visibility Patcher v2.1.74');
   console.log('=============================================\n');
   console.log('Usage: node patch-tool-visibility.js [options]\n');
   console.log('Options:');
@@ -30,7 +30,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Tool Visibility Patcher v2.1.72');
+console.log('Claude Code Tool Visibility Patcher v2.1.74');
 console.log('=============================================\n');
 
 // Helper function to safely execute shell commands
@@ -196,8 +196,9 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.69, structural change to memo cache block, U5->d5, $r4->pt4, A->K (message), _->O (ids), O->j (anim), w->$ (verbose), Y->w (tools), q->Y (lookups), M->W (group)
 // Note: In v2.1.71, d5->o5, pt4->O7q, V->N, memo indices shifted q[78-85]->q[81-88]
 // Note: In v2.1.72, o5->M5, O7q->FQ4, O->$ (ids), $->O (verbose), w->_ (tools), memo indices shifted q[81-88]->q[82-89]
-const toolVisSearchPattern = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=M5.createElement(FQ4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
-const toolVisReplacement = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=M5.createElement(FQ4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
+// Note: In v2.1.74, M5->G5, FQ4->Nd4, N->V (memo temp var), prop vars and indices unchanged
+const toolVisSearchPattern = 'case"collapsed_read_search":{let V;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)V=G5.createElement(Nd4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=V;else V=q[89];return V}';
+const toolVisReplacement = 'case"collapsed_read_search":{let V;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)V=G5.createElement(Nd4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=V;else V=q[89];return V}';
 
 let patchApplied = false;
 
