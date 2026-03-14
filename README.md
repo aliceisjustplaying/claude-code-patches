@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.75 (Updated 2026-03-13)
+**Current Version:** Claude Code 2.1.76 (Updated 2026-03-13)
 
 ## Required Setting (v2.1.64+)
 
@@ -140,7 +140,7 @@ function GkQ({streamMode:A}){return null}
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 - v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
-### Patch 2: Force Thinking Visibility (v2.1.75)
+### Patch 2: Force Thinking Visibility (v2.1.76)
 **Before:**
 ```javascript
 case"thinking":{if(!D&&!w)return null;let G=D&&!(!Z||W===Z),v;
@@ -210,11 +210,12 @@ case"thinking":{let G=!1,v;
 - v2.1.72: Changed to `gT1` component, `M5.createElement`, checks `D,w`, `_→w` (verbose), `V→v` (memo temp)
 - v2.1.74: Changed to `kv1` component, `G5.createElement`, checks `D,w`, `f↔G` swap (hideInTranscript), `Z→f` (hide check var)
 - v2.1.75: Changed to `xv1` component, `v5.createElement`, checks `D,w`, `f→Z` (hide check var reverted)
+- v2.1.76: Changed to `_N1` component, `V3.createElement`, checks `D,w`, `G→f` (hideInTranscript var)
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.75 installed
+- Claude Code v2.1.76 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -322,10 +323,10 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.75):
+Check if patch is applied (for v2.1.76):
 
 ```bash
-# Check thinking visibility patch (v2.1.75)
+# Check thinking visibility patch (v2.1.76)
 grep -n 'v5.createElement(xv1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
@@ -446,7 +447,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.75
+- **Version:** Claude Code 2.1.76
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -543,6 +544,7 @@ The minified code patterns change with each Claude Code update:
 | 2.1.72  | *deprecated*   | `gT1`     | `D,w` check, `M5.createElement`, `q[22]` memo |
 | 2.1.74  | *deprecated*   | `kv1`     | `D,w` check, `G5.createElement`, `q[22]` memo |
 | 2.1.75  | *deprecated*   | `xv1`     | `D,w` check, `v5.createElement`, `q[22]` memo |
+| 2.1.76  | *deprecated*   | `_N1`     | `D,w` check, `V3.createElement`, `q[22]` memo |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -553,7 +555,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.75
+4. **Version-specific:** Patterns are specific to v2.1.76
 
 ## Feature Request
 
