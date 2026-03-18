@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.77 (Updated 2026-03-17)
+**Current Version:** Claude Code 2.1.78 (Updated 2026-03-18)
 
 ## Required Setting (v2.1.64+)
 
@@ -140,17 +140,17 @@ function GkQ({streamMode:A}){return null}
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 - v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
-### Patch 2: Force Thinking Visibility (v2.1.77)
+### Patch 2: Force Thinking Visibility (v2.1.78)
 **Before:**
 ```javascript
-case"thinking":{if(!D&&!w)return null;let G=D&&!(!Z||W===Z),v;
-  ...v=v5.createElement(xv1,{addMargin:Y,param:K,isTranscriptMode:D,verbose:w,hideInTranscript:G})...
+case"thinking":{if(!M&&!w)return null;let f=M&&!(!Z||W===Z),T;
+  ...T=T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:M,verbose:w,hideInTranscript:f})...
 ```
 
 **After:**
 ```javascript
-case"thinking":{let G=!1,v;
-  ...v=v5.createElement(xv1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})...
+case"thinking":{let f=!1,T;
+  ...T=T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})...
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
@@ -212,11 +212,12 @@ case"thinking":{let G=!1,v;
 - v2.1.75: Changed to `xv1` component, `v5.createElement`, checks `D,w`, `f→Z` (hide check var reverted)
 - v2.1.76: Changed to `_N1` component, `V3.createElement`, checks `D,w`, `G→f` (hideInTranscript var)
 - v2.1.77: Changed to `KN1` component, `E3.createElement`, checks `D,w`, `v→T` (memo temp var)
+- v2.1.78: Changed to `UN1` component, `T3.createElement`, checks `M,w`, `D→M` (guard/isTranscriptMode var)
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.77 installed
+- Claude Code v2.1.78 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -324,11 +325,11 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.77):
+Check if patch is applied (for v2.1.78):
 
 ```bash
-# Check thinking visibility patch (v2.1.77)
-grep -n 'E3.createElement(KN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.78)
+grep -n 'T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
 
@@ -448,7 +449,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.77
+- **Version:** Claude Code 2.1.78
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -546,7 +547,8 @@ The minified code patterns change with each Claude Code update:
 | 2.1.74  | *deprecated*   | `kv1`     | `D,w` check, `G5.createElement`, `q[22]` memo |
 | 2.1.75  | *deprecated*   | `xv1`     | `D,w` check, `v5.createElement`, `q[22]` memo |
 | 2.1.76  | *deprecated*   | `_N1`     | `D,w` check, `V3.createElement`, `q[22]` memo |
-| 2.1.77  | *current*      | `KN1`     | `D,w` check, `E3.createElement`, `q[22]` memo |
+| 2.1.77  | *deprecated*   | `KN1`     | `D,w` check, `E3.createElement`, `q[22]` memo |
+| 2.1.78  | *current*      | `UN1`     | `M,w` check, `T3.createElement`, `q[22]` memo |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -775,8 +777,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-03-17
-**Claude Code Version:** 2.1.77
+**Last Updated:** 2026-03-18
+**Claude Code Version:** 2.1.78
 **Status:** ✅ Working
 
 ### Quick Reference
