@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Tool Visibility Patcher v2.1.77');
+  console.log('Claude Code Tool Visibility Patcher v2.1.78');
   console.log('=============================================\n');
   console.log('Usage: node patch-tool-visibility.js [options]\n');
   console.log('Options:');
@@ -30,7 +30,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Tool Visibility Patcher v2.1.77');
+console.log('Claude Code Tool Visibility Patcher v2.1.78');
 console.log('=============================================\n');
 
 // Helper function to safely execute shell commands
@@ -200,8 +200,9 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.75, G5->v5, Nd4->Ed4, prop vars and indices unchanged
 // Note: In v2.1.76, v5->V3, Ed4->fc4, V->N (memo temp var), prop vars and indices unchanged
 // Note: In v2.1.77, V3->E3, fc4->Wd4, N unchanged, prop vars and indices unchanged
-const toolVisSearchPattern = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=E3.createElement(Wd4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
-const toolVisReplacement = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=E3.createElement(Wd4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
+// Note: In v2.1.78, E3->T3, Wd4->bc4, N unchanged, prop vars and indices unchanged
+const toolVisSearchPattern = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=T3.createElement(bc4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
+const toolVisReplacement = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=T3.createElement(bc4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
 
 let patchApplied = false;
 
