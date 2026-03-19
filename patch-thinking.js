@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.78');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.79');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.78');
+console.log('Claude Code Thinking Visibility Patcher v2.1.79');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -199,6 +199,7 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.76, v5->V3, xv1->_N1, G->f (hideInTranscript var)
 // Note: In v2.1.77, V3->E3, _N1->KN1, v->T (memo temp var)
 // Note: In v2.1.78, E3->T3, KN1->UN1, D->M (guard/isTranscriptMode var)
+// Note: In v2.1.79, T3->E3, UN1->fk8, M->D (guard/isTranscriptMode var reverted)
 //
 // IMPORTANT: redact-thinking beta header (v2.1.64+)
 // Starting in v2.1.64 (reverted in v2.1.66, re-introduced permanently in v2.1.69),
@@ -214,8 +215,8 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Users MUST set "showThinkingSummaries": true in ~/.claude/settings.json to
 // prevent the redaction and allow this patch to actually display thinking content.
 // See: https://github.com/anthropics/claude-code/issues/31326
-const thinkingSearchPattern = 'case"thinking":{if(!M&&!w)return null;let f=M&&!(!Z||W===Z),T;if(q[22]!==Y||q[23]!==M||q[24]!==K||q[25]!==f||q[26]!==w)T=T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:M,verbose:w,hideInTranscript:f}),q[22]=Y,q[23]=M,q[24]=K,q[25]=f,q[26]=w,q[27]=T;else T=q[27];return T}';
-const thinkingReplacement = 'case"thinking":{let f=!1,T;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==f||q[26]!==w)T=T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=f,q[26]=w,q[27]=T;else T=q[27];return T}';
+const thinkingSearchPattern = 'case"thinking":{if(!D&&!w)return null;let f=D&&!(!Z||W===Z),T;if(q[22]!==Y||q[23]!==D||q[24]!==K||q[25]!==f||q[26]!==w)T=E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:D,verbose:w,hideInTranscript:f}),q[22]=Y,q[23]=D,q[24]=K,q[25]=f,q[26]=w,q[27]=T;else T=q[27];return T}';
+const thinkingReplacement = 'case"thinking":{let f=!1,T;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==f||q[26]!==w)T=E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=f,q[26]=w,q[27]=T;else T=q[27];return T}';
 
 // Check if showThinkingSummaries is set in settings.json (required since v2.1.64)
 function checkShowThinkingSummaries() {

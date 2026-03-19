@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.78 (Updated 2026-03-18)
+**Current Version:** Claude Code 2.1.79 (Updated 2026-03-19)
 
 ## Required Setting (v2.1.64+)
 
@@ -140,11 +140,11 @@ function GkQ({streamMode:A}){return null}
 - v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 - v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
 
-### Patch 2: Force Thinking Visibility (v2.1.78)
+### Patch 2: Force Thinking Visibility (v2.1.79)
 **Before:**
 ```javascript
-case"thinking":{if(!M&&!w)return null;let f=M&&!(!Z||W===Z),T;
-  ...T=T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:M,verbose:w,hideInTranscript:f})...
+case"thinking":{if(!D&&!w)return null;let f=D&&!(!Z||W===Z),T;
+  ...T=E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:D,verbose:w,hideInTranscript:f})...
 ```
 
 **After:**
@@ -213,11 +213,12 @@ case"thinking":{let f=!1,T;
 - v2.1.76: Changed to `_N1` component, `V3.createElement`, checks `D,w`, `G→f` (hideInTranscript var)
 - v2.1.77: Changed to `KN1` component, `E3.createElement`, checks `D,w`, `v→T` (memo temp var)
 - v2.1.78: Changed to `UN1` component, `T3.createElement`, checks `M,w`, `D→M` (guard/isTranscriptMode var)
+- v2.1.79: Changed to `fk8` component, `E3.createElement`, checks `D,w`, `M→D` (guard/isTranscriptMode var reverted)
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.78 installed
+- Claude Code v2.1.79 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -325,11 +326,11 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.78):
+Check if patch is applied (for v2.1.79):
 
 ```bash
-# Check thinking visibility patch (v2.1.78)
-grep -n 'T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (v2.1.79)
+grep -n 'E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should show a match with the patched thinking case
 
@@ -449,7 +450,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.78
+- **Version:** Claude Code 2.1.79
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -548,7 +549,8 @@ The minified code patterns change with each Claude Code update:
 | 2.1.75  | *deprecated*   | `xv1`     | `D,w` check, `v5.createElement`, `q[22]` memo |
 | 2.1.76  | *deprecated*   | `_N1`     | `D,w` check, `V3.createElement`, `q[22]` memo |
 | 2.1.77  | *deprecated*   | `KN1`     | `D,w` check, `E3.createElement`, `q[22]` memo |
-| 2.1.78  | *current*      | `UN1`     | `M,w` check, `T3.createElement`, `q[22]` memo |
+| 2.1.78  | *deprecated*   | `UN1`     | `M,w` check, `T3.createElement`, `q[22]` memo |
+| 2.1.79  | *current*      | `fk8`     | `D,w` check, `E3.createElement`, `q[22]` memo |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -777,8 +779,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-03-18
-**Claude Code Version:** 2.1.78
+**Last Updated:** 2026-03-19
+**Claude Code Version:** 2.1.79
 **Status:** ✅ Working
 
 ### Quick Reference
