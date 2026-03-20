@@ -187,7 +187,7 @@ case"thinking":
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.0.62 installed
+- Claude Code v2.1.80 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -295,18 +295,18 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patches are applied (for v2.0.62):
+Check if patches are applied (for v2.1.80):
 
 ```bash
-# Check ZT2 patch
-grep -n "function ZT2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check vo4 patch
+grep -n "function vo4" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: function ZT2({streamMode:A}){return null}
+# Should show: function vo4(A){return null}
 
 # Check thinking visibility patch
-grep -n 'case"thinking":return J3.createElement(X59' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+grep -n 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==Y||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=R3.createElement(zE8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: case"thinking":return J3.createElement(X59,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});
+# Should show a match with isTranscriptMode:!0 in the zE8 renderer
 ```
 
 ## Troubleshooting
@@ -411,7 +411,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~3,600+ lines, ~9+ MB (heavily minified)
-- **Version:** Claude Code 2.0.46
+- **Version:** Claude Code 2.1.80
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -441,11 +441,11 @@ $(which claude) → resolve symlinks → find cli.js
 
 ### Why Two Patches?
 
-1. **ZT2 Function:** Controls the UI banner shown after thinking completes
+1. **vo4 Function:** Controls the inline thinking banner
 2. **Thinking Renderer:** Controls whether the actual thinking text is displayed
 
 Both must be patched because they're separate systems:
-- Patching only ZT2 → Blank line appears where thinking should be
+- Patching only vo4 → Inline thinking label remains visible
 - Patching only the renderer → Banner still shows "ctrl+o to show"
 
 ### Pattern Evolution Across Versions
@@ -490,7 +490,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.0.62
+4. **Version-specific:** Patterns are specific to v2.1.80
 
 ## Feature Request
 
@@ -709,7 +709,7 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 ---
 
 **Last Updated:** 2025-12-09
-**Claude Code Version:** 2.0.62
+**Claude Code Version:** 2.1.80
 **Status:** ✅ Working
 
 ### Quick Reference

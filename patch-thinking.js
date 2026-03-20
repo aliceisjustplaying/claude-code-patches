@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.0.62');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.80');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.0.62');
+console.log('Claude Code Thinking Visibility Patcher v2.1.80');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -190,7 +190,7 @@ let patch2Applied = false;
 // Check if patches can be applied
 console.log('Checking patches...\n');
 
-console.log('Patch 1: ZT2 banner removal');
+console.log('Patch 1: vo4 banner removal');
 if (content.includes(bannerSearchPattern)) {
   patch1Applied = true;
   console.log('  ✅ Pattern found - ready to apply');
@@ -243,7 +243,7 @@ console.log('\nApplying patches...');
 // Apply Patch 1
 if (patch1Applied) {
   content = content.replace(bannerSearchPattern, bannerReplacement);
-  console.log('✅ Patch 1 applied: ZT2 function now returns null');
+  console.log('✅ Patch 1 applied: vo4 function now returns null');
 }
 
 // Apply Patch 2
