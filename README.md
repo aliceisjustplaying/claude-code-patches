@@ -24,16 +24,46 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 **Current Version:** Claude Code 2.1.80 (Updated 2025-12-09)
 
+## Required Setting (v2.1.64+)
+
+Starting in v2.1.64 (briefly reverted, permanent from v2.1.69), Claude Code sends a
+`redact-thinking-2026-02-12` beta header with every API request. This tells the API
+to **strip thinking text** from the response — thinking blocks still arrive with valid
+cryptographic signatures, but the `thinking` property is an empty string. The
+rendering patch is correct but has nothing to display.
+
+To disable this redaction, you **must** add the following to `~/.claude/settings.json`:
+
+```json
+{
+  "showThinkingSummaries": true
+}
+```
+
+This setting is **not documented** in the [official Claude Code settings docs](https://code.claude.com/docs/en/settings).
+Its internal schema description is *"Show thinking summaries in the transcript view
+(ctrl+o). Default: false."* — but what it actually controls is whether the API request
+includes the `redact-thinking` beta header. Without it, the API never sends thinking
+content to the client, and no client-side patch can make it visible.
+
+**Without this setting, the patch will apply cleanly but you will see no thinking
+content.** The patch script will warn you if the setting is missing.
+
+See also: [anthropics/claude-code#31326](https://github.com/anthropics/claude-code/issues/31326) — upstream bug report confirming thinking content is empty since v2.1.69.
+
 ## Quick Start
 
 ```bash
-# Clone or download this repository
+# 1. Enable thinking content from the API (required since v2.1.64)
+# Add "showThinkingSummaries": true to ~/.claude/settings.json
+
+# 2. Clone or download this repository
 cd claude-code-thinking
 
-# Run the patch script (automatically detects your installation)
+# 3. Run the patch script (automatically detects your installation)
 node patch-thinking.js
 
-# Restart Claude Code
+# 4. Restart Claude Code
 ```
 
 That's it! Thinking blocks now display inline without `ctrl+o`.
@@ -107,7 +137,7 @@ function GkQ({streamMode:A}){return null}
 - v2.0.58: Renamed to `SM2`, uses `$P.createElement`, `GRA.useState`
 - v2.0.59: Renamed to `DO2`, uses `MP.createElement`, `CRA.useState`
 - v2.0.61: Renamed to `RR2`, uses `rj.createElement`, `vTA.useState`, `P` container
-- v2.1.80: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
+- v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 
 ### Patch 2: Force Thinking Visibility (v2.0.46)
 **Before:**
@@ -152,12 +182,12 @@ case"thinking":
 - v2.0.58: Changed to `k49` component (lowercase k), `b3` variable, checks `K` and `G`
 - v2.0.59: Changed to `F89` component, `u3` variable, checks `K` and `G`
 - v2.0.61: Changed to `T69` component, `A3` variable, checks `F` and `G`
-- v2.1.80: Changed to `X59` component, `J3` variable, checks `F` and `G`
+- v2.0.62: Changed to `X59` component, `J3` variable, checks `F` and `G`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.80 installed
+- Claude Code v2.0.62 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -265,7 +295,7 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patches are applied (for v2.1.80):
+Check if patches are applied (for v2.0.62):
 
 ```bash
 # Check ZT2 patch
@@ -451,7 +481,7 @@ The minified code patterns change with each Claude Code update:
 | 2.0.58  | `SM2`          | `k49`     | `K,G` check |
 | 2.0.59  | `DO2`          | `F89`     | `K,G` check |
 | 2.0.61  | `RR2`          | `T69`     | `F,G` check |
-| 2.1.80  | `ZT2`          | `X59`     | `F,G` check |
+| 2.0.62  | `ZT2`          | `X59`     | `F,G` check |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
 
@@ -460,7 +490,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.80
+4. **Version-specific:** Patterns are specific to v2.0.62
 
 ## Feature Request
 
@@ -679,7 +709,7 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 ---
 
 **Last Updated:** 2025-12-09
-**Claude Code Version:** 2.1.80
+**Claude Code Version:** 2.0.62
 **Status:** ✅ Working
 
 ### Quick Reference

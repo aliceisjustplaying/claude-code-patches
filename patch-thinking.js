@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.80');
+  console.log('Claude Code Thinking Visibility Patcher v2.0.62');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.80');
+console.log('Claude Code Thinking Visibility Patcher v2.0.62');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,13 +176,11 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Patch 1: Thinking banner removal (v2.1.80)
-// Note: In v2.1.80 the banner function is `vo4`, which renders the inline "✻ Thinking…" label.
+// Thinking visibility patch
 const bannerSearchPattern = 'function vo4(A){let q=_6(3),{addMargin:K}=A,_=(K===void 0?!1:K)?1:0,z;if(q[0]===Symbol.for("react.memo_cache_sentinel"))z=Sg1.default.createElement(T,{dimColor:!0,italic:!0},"✻ Thinking…"),q[0]=z;else z=q[0];let w;if(q[1]!==_)w=Sg1.default.createElement(B,{marginTop:_},z),q[1]=_,q[2]=w;else w=q[2];return w}';
 const bannerReplacement = 'function vo4(A){return null}';
 
-// Patch 2: Thinking Visibility (v2.1.80)
-// Note: In v2.1.80 the renderer is `zE8`, with createElement namespace `R3`, component `zE8`, and `hideInTranscript` still enforced.
+// Thinking content is redacted unless showThinkingSummaries is enabled
 const thinkingSearchPattern = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==Y||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=R3.createElement(zE8,{addMargin:Y,param:K,isTranscriptMode:X,verbose:w,hideInTranscript:G}),q[31]=Y,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
 const thinkingReplacement = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==Y||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=R3.createElement(zE8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=Y,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
 
