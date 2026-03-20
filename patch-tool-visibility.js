@@ -180,10 +180,31 @@ if (!fs.existsSync(targetPath)) {
 let content = fs.readFileSync(targetPath, 'utf8');
 
 // Tool Visibility Patch (v2.1.80)
-// In v2.1.80 the collapsed renderer is `co4`, with createElement namespace `R3`, verbose prop `O`, and tool list prop `z`.
-// The patch forces `verbose:!0` so read/search groups render individual tool calls instead of collapsed summaries.
-const toolVisSearchPattern = 'case"collapsed_read_search":{let k;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==z||q[88]!==O)k=R3.createElement(co4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:z,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=z,q[88]=O,q[89]=k;else k=q[89];return k}';
-const toolVisReplacement = 'case"collapsed_read_search":{let k;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==z||q[88]!==O)k=R3.createElement(co4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:z,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=z,q[88]=O,q[89]=k;else k=q[89];return k}';
+// Forces collapsed read/search tool groups to always render individual tool calls
+// instead of summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
+// This is achieved by forcing verbose:!0 in the collapsed_read_search renderer (co4)
+// so it always takes the verbose code path showing each tool call with file paths.
+// Note: In v2.1.42, the relevant variables in PyY are:
+//   F5=createElement namespace, yQ4=collapsed renderer component,
+//   A=message, H=inProgressToolUseIDs, O=shouldAnimate, w=verbose,
+//   Y=tools, q=lookups, M=isActiveGroup
+// Note: In v2.1.44, collapsed renderer changed: yQ4->SQ4
+// Note: In v2.1.56, F5->g5, SQ4->Mc4, H->_ (inProgressToolUseIDs), O->H (shouldAnimate)
+// Note: In v2.1.59, g5->c5, Mc4->Ni7
+// Note: In v2.1.62, pattern unchanged from v2.1.59
+// Note: In v2.1.63, c5->U5, Ni7->$r4, H->O (shouldAnimate)
+// Note: In v2.1.69, structural change to memo cache block, U5->d5, $r4->pt4, A->K (message), _->O (ids), O->j (anim), w->$ (verbose), Y->w (tools), q->Y (lookups), M->W (group)
+// Note: In v2.1.71, d5->o5, pt4->O7q, V->N, memo indices shifted q[78-85]->q[81-88]
+// Note: In v2.1.72, o5->M5, O7q->FQ4, O->$ (ids), $->O (verbose), w->_ (tools), memo indices shifted q[81-88]->q[82-89]
+// Note: In v2.1.74, M5->G5, FQ4->Nd4, N->V (memo temp var), prop vars and indices unchanged
+// Note: In v2.1.75, G5->v5, Nd4->Ed4, prop vars and indices unchanged
+// Note: In v2.1.76, v5->V3, Ed4->fc4, V->N (memo temp var), prop vars and indices unchanged
+// Note: In v2.1.77, V3->E3, fc4->Wd4, N unchanged, prop vars and indices unchanged
+// Note: In v2.1.78, E3->T3, Wd4->bc4, N unchanged, prop vars and indices unchanged
+// Note: In v2.1.79, T3->E3, bc4->_a4, N unchanged, prop vars and indices unchanged
+// Note: In v2.1.80, collapsed renderer changed to `_a4`, component namespace `E3`, verbose prop `O`, tool list prop `_`
+const toolVisSearchPattern = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=E3.createElement(_a4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
+const toolVisReplacement = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=E3.createElement(_a4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
 
 let patchApplied = false;
 
