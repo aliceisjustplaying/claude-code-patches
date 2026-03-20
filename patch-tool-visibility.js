@@ -202,9 +202,9 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.77, V3->E3, fc4->Wd4, N unchanged, prop vars and indices unchanged
 // Note: In v2.1.78, E3->T3, Wd4->bc4, N unchanged, prop vars and indices unchanged
 // Note: In v2.1.79, T3->E3, bc4->_a4, N unchanged, prop vars and indices unchanged
-// Note: In v2.1.80, collapsed renderer changed to `_a4`, component namespace `E3`, verbose prop `O`, tool list prop `_`
-const toolVisSearchPattern = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=E3.createElement(_a4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
-const toolVisReplacement = 'case"collapsed_read_search":{let N;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==_||q[88]!==O)N=E3.createElement(_a4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:_,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=_,q[88]=O,q[89]=N;else N=q[89];return N}';
+// Note: In v2.1.80, E3->R3, _a4->co4, N->k, tool list prop _->z
+const toolVisSearchPattern = 'case"collapsed_read_search":{let k;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==z||q[88]!==O)k=R3.createElement(co4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:z,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=z,q[88]=O,q[89]=k;else k=q[89];return k}';
+const toolVisReplacement = 'case"collapsed_read_search":{let k;if(q[82]!==$||q[83]!==W||q[84]!==Y||q[85]!==K||q[86]!==j||q[87]!==z||q[88]!==O)k=R3.createElement(co4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:z,lookups:Y,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=Y,q[85]=K,q[86]=j,q[87]=z,q[88]=O,q[89]=k;else k=q[89];return k}';
 
 let patchApplied = false;
 
