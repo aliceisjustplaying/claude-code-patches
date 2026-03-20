@@ -22,48 +22,18 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.79 (Updated 2026-03-19)
-
-## Required Setting (v2.1.64+)
-
-Starting in v2.1.64 (briefly reverted, permanent from v2.1.69), Claude Code sends a
-`redact-thinking-2026-02-12` beta header with every API request. This tells the API
-to **strip thinking text** from the response — thinking blocks still arrive with valid
-cryptographic signatures, but the `thinking` property is an empty string. The
-rendering patch is correct but has nothing to display.
-
-To disable this redaction, you **must** add the following to `~/.claude/settings.json`:
-
-```json
-{
-  "showThinkingSummaries": true
-}
-```
-
-This setting is **not documented** in the [official Claude Code settings docs](https://code.claude.com/docs/en/settings).
-Its internal schema description is *"Show thinking summaries in the transcript view
-(ctrl+o). Default: false."* — but what it actually controls is whether the API request
-includes the `redact-thinking` beta header. Without it, the API never sends thinking
-content to the client, and no client-side patch can make it visible.
-
-**Without this setting, the patch will apply cleanly but you will see no thinking
-content.** The patch script will warn you if the setting is missing.
-
-See also: [anthropics/claude-code#31326](https://github.com/anthropics/claude-code/issues/31326) — upstream bug report confirming thinking content is empty since v2.1.69.
+**Current Version:** Claude Code 2.1.80 (Updated 2025-12-09)
 
 ## Quick Start
 
 ```bash
-# 1. Enable thinking content from the API (required since v2.1.64)
-# Add "showThinkingSummaries": true to ~/.claude/settings.json
-
-# 2. Clone or download this repository
+# Clone or download this repository
 cd claude-code-thinking
 
-# 3. Run the patch script (automatically detects your installation)
+# Run the patch script (automatically detects your installation)
 node patch-thinking.js
 
-# 4. Restart Claude Code
+# Restart Claude Code
 ```
 
 That's it! Thinking blocks now display inline without `ctrl+o`.
@@ -137,20 +107,19 @@ function GkQ({streamMode:A}){return null}
 - v2.0.58: Renamed to `SM2`, uses `$P.createElement`, `GRA.useState`
 - v2.0.59: Renamed to `DO2`, uses `MP.createElement`, `CRA.useState`
 - v2.0.61: Renamed to `RR2`, uses `rj.createElement`, `vTA.useState`, `P` container
-- v2.0.62: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
-- v2.0.71: **DEPRECATED** - Banner function removed; functionality integrated into `mn2` component
+- v2.1.80: Renamed to `ZT2`, uses `GP.createElement`, `rTA.useState`, `P` container
 
-### Patch 2: Force Thinking Visibility (v2.1.79)
+### Patch 2: Force Thinking Visibility (v2.0.46)
 **Before:**
 ```javascript
-case"thinking":{if(!D&&!w)return null;let f=D&&!(!Z||W===Z),T;
-  ...T=E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:D,verbose:w,hideInTranscript:f})...
+case"thinking":if(!K&&!Z)return null;
+  return H7.createElement(T32,{addMargin:Q,param:A,isTranscriptMode:K,verbose:Z});
 ```
 
 **After:**
 ```javascript
-case"thinking":{let f=!1,T;
-  ...T=T3.createElement(UN1,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})...
+case"thinking":
+  return H7.createElement(T32,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:Z});
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
@@ -183,42 +152,12 @@ case"thinking":{let f=!1,T;
 - v2.0.58: Changed to `k49` component (lowercase k), `b3` variable, checks `K` and `G`
 - v2.0.59: Changed to `F89` component, `u3` variable, checks `K` and `G`
 - v2.0.61: Changed to `T69` component, `A3` variable, checks `F` and `G`
-- v2.0.62: Changed to `X59` component, `J3` variable, checks `F` and `G`
-- v2.0.71: Changed to `mn2` component, `b5` variable, checks `H` and `G`
-- v2.0.73: Changed to `Gt2` component, `J5` variable, checks `D` and `Z`
-- v2.0.75: Changed to `co2` component, `J5` variable, checks `D` and `Z`
-- v2.0.76: Changed to `lo2` component, `J5` variable, checks `D` and `Z`
-- v2.1.2: Changed to `ybA` component, `o8` variable, checks `F` and `Z`, added `hideInTranscript` property
-- v2.1.6: Changed to `_bA` component, `Z5` variable, checks `F` and `Z`
-- v2.1.7: Changed to `gkA` component, `K5` variable, checks `F` and `Z`
-- v2.1.12: Changed to `fI1` component, `H9` variable, checks `D` and `H`, added `T` check, uses React memo cache
-- v2.1.17: Changed to `oG1` component, `H9` variable, checks `D`, `H`, and `T`
-- v2.1.19: Changed to `oG1` component (unchanged), variable `x`, checks `D`, `H`, and `T`
-- v2.1.20: Changed to `Ej1` component, `H9.createElement` variable, checks `D`, `H`, and `T`
-- v2.1.22: Changed to `iM1` component, `Y9.createElement` variable, checks `D`, `H`, and `T`
-- v2.1.31: Changed to `_j6` component, `K9.createElement` variable, checks `j` and `V`, **verbose parameter removed**, memo cache changed to `q[21]` format
-- v2.1.34: Changed to `sD6` component, `I5.createElement` variable, checks `M` and `Z`
-- v2.1.37: Changed to `Mj6` component, `b5.createElement` variable, checks `j` and `Z`
-- v2.1.39: Changed to `pM6` component, `F5.createElement` variable, checks `j` and `Z`, memo indices shifted `q[22-26]`
-- v2.1.42: Changed to `dW6` component, `F5.createElement` variable, checks `D` and `Z`
-- v2.1.56: Changed to `Kf1` component, `g5.createElement` variable, checks `X`, `V`, and `_`, added `verbose` prop, memo 6 slots `q[22-27]`
-- v2.1.59: Changed to `JT1` component, `c5.createElement` variable, checks `D`, `f`, and `_`
-- v2.1.62: Changed to `jT1` component (case change only), rest unchanged
-- v2.1.63: Changed to `qN1` component, `U5.createElement`, guard reverted to 2 checks (`X,_`), memo `q[21]` (5 slots)
-- v2.1.69: Changed to `LN1` component, `d5.createElement`, checks `D,_`, memo `q[22]` (6 slots)
-- v2.1.71: Changed to `PL1` component, `o5.createElement`, checks `D,_`, `v→V`, `G→Z` in hideInTranscript
-- v2.1.72: Changed to `gT1` component, `M5.createElement`, checks `D,w`, `_→w` (verbose), `V→v` (memo temp)
-- v2.1.74: Changed to `kv1` component, `G5.createElement`, checks `D,w`, `f↔G` swap (hideInTranscript), `Z→f` (hide check var)
-- v2.1.75: Changed to `xv1` component, `v5.createElement`, checks `D,w`, `f→Z` (hide check var reverted)
-- v2.1.76: Changed to `_N1` component, `V3.createElement`, checks `D,w`, `G→f` (hideInTranscript var)
-- v2.1.77: Changed to `KN1` component, `E3.createElement`, checks `D,w`, `v→T` (memo temp var)
-- v2.1.78: Changed to `UN1` component, `T3.createElement`, checks `M,w`, `D→M` (guard/isTranscriptMode var)
-- v2.1.79: Changed to `fk8` component, `E3.createElement`, checks `D,w`, `M→D` (guard/isTranscriptMode var reverted)
+- v2.1.80: Changed to `X59` component, `J3` variable, checks `F` and `G`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.79 installed
+- Claude Code v2.1.80 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -326,15 +265,18 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.79):
+Check if patches are applied (for v2.1.80):
 
 ```bash
-# Check thinking visibility patch (v2.1.79)
-grep -n 'E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check ZT2 patch
+grep -n "function ZT2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show a match with the patched thinking case
+# Should show: function ZT2({streamMode:A}){return null}
 
-# Note: Banner removal patch is deprecated in v2.0.71+ - no longer needed
+# Check thinking visibility patch
+grep -n 'case"thinking":return J3.createElement(X59' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+
+# Should show: case"thinking":return J3.createElement(X59,{addMargin:Q,param:A,isTranscriptMode:!0,verbose:G});
 ```
 
 ## Troubleshooting
@@ -392,17 +334,6 @@ Searched using the following methods:
 
 **Solution:** You must restart Claude Code for changes to take effect.
 
-### Patch Applied But No Thinking Content Visible
-
-**Cause (v2.1.64+):** Claude Code sends a `redact-thinking-2026-02-12` beta header
-that tells the API to strip thinking text from responses. The thinking blocks still
-exist (with valid signatures), but the `thinking` property is an empty string.
-
-**Solution:** Add `"showThinkingSummaries": true` to `~/.claude/settings.json` and
-restart Claude Code. See [Required Setting](#required-setting-v2164) above.
-
-See also: [anthropics/claude-code#31326](https://github.com/anthropics/claude-code/issues/31326)
-
 ### Backup File Missing
 
 The patch script creates a backup automatically on first run. The `--restore` command will fail if the backup doesn't exist.
@@ -449,8 +380,8 @@ The script automatically works with all Node.js version managers:
 ## Technical Details
 
 ### File Structure
-- **cli.js:** ~7,466 lines, ~11 MB (heavily minified)
-- **Version:** Claude Code 2.1.79
+- **cli.js:** ~3,600+ lines, ~9+ MB (heavily minified)
+- **Version:** Claude Code 2.0.46
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -520,48 +451,16 @@ The minified code patterns change with each Claude Code update:
 | 2.0.58  | `SM2`          | `k49`     | `K,G` check |
 | 2.0.59  | `DO2`          | `F89`     | `K,G` check |
 | 2.0.61  | `RR2`          | `T69`     | `F,G` check |
-| 2.0.62  | `ZT2`          | `X59`     | `F,G` check |
-| 2.0.71  | *deprecated*   | `mn2`     | `H,G` check |
-| 2.0.73  | *deprecated*   | `Gt2`     | `D,Z` check |
-| 2.0.75  | *deprecated*   | `co2`     | `D,Z` check |
-| 2.0.76  | *deprecated*   | `lo2`     | `D,Z` check |
-| 2.1.2   | *deprecated*   | `ybA`     | `F,Z` check + `hideInTranscript` |
-| 2.1.6   | *deprecated*   | `_bA`     | `F,Z` check |
-| 2.1.7   | *deprecated*   | `gkA`     | `F,Z` check |
-| 2.1.12  | *deprecated*   | `fI1`     | `D,H,T` check + memo cache |
-| 2.1.17  | *deprecated*   | `oG1`     | `D,H,T` check |
-| 2.1.19  | *deprecated*   | `oG1`     | `D,H,T` check |
-| 2.1.20  | *deprecated*   | `Ej1`     | `D,H,T` check, `H9.createElement` |
-| 2.1.22  | *deprecated*   | `iM1`     | `D,H,T` check, `Y9.createElement` |
-| 2.1.31  | *deprecated*   | `_j6`     | `j,V` check (no verbose), `K9.createElement`, `q[21]` memo |
-| 2.1.34  | *deprecated*   | `sD6`     | `M,Z` check, `I5.createElement`, `q[21]` memo |
-| 2.1.37  | *deprecated*   | `Mj6`     | `j,Z` check, `b5.createElement`, `q[21]` memo |
-| 2.1.39  | *deprecated*   | `pM6`     | `j,Z` check, `F5.createElement`, `q[22]` memo |
-| 2.1.42  | *deprecated*   | `dW6`     | `D,Z` check, `F5.createElement`, `q[22]` memo |
-| 2.1.56  | *deprecated*   | `Kf1`     | `X,V,_` check, `g5.createElement`, `q[22]` memo, `verbose` prop |
-| 2.1.59  | *deprecated*   | `JT1`     | `D,f,_` check, `c5.createElement`, `q[22]` memo |
-| 2.1.62  | *deprecated*   | `jT1`     | `D,f,_` check, `c5.createElement`, `q[22]` memo |
-| 2.1.63  | *deprecated*   | `qN1`     | `X,_` check (2 guards), `U5.createElement`, `q[21]` memo |
-| 2.1.69  | *deprecated*   | `LN1`     | `D,_` check, `d5.createElement`, `q[22]` memo (6 slots) |
-| 2.1.71  | *deprecated*   | `PL1`     | `D,_` check, `o5.createElement`, `q[22]` memo |
-| 2.1.72  | *deprecated*   | `gT1`     | `D,w` check, `M5.createElement`, `q[22]` memo |
-| 2.1.74  | *deprecated*   | `kv1`     | `D,w` check, `G5.createElement`, `q[22]` memo |
-| 2.1.75  | *deprecated*   | `xv1`     | `D,w` check, `v5.createElement`, `q[22]` memo |
-| 2.1.76  | *deprecated*   | `_N1`     | `D,w` check, `V3.createElement`, `q[22]` memo |
-| 2.1.77  | *deprecated*   | `KN1`     | `D,w` check, `E3.createElement`, `q[22]` memo |
-| 2.1.78  | *deprecated*   | `UN1`     | `M,w` check, `T3.createElement`, `q[22]` memo |
-| 2.1.79  | *current*      | `fk8`     | `D,w` check, `E3.createElement`, `q[22]` memo |
+| 2.1.80  | `ZT2`          | `X59`     | `F,G` check |
 
 When Claude Code updates, function names and component identifiers are regenerated during minification. In some cases (like v2.0.29), the patterns remain unchanged.
-
-**Note on v2.0.71:** The separate banner function was removed. The "Thought for X seconds" message no longer exists - the banner functionality was integrated into the `mn2` thinking component. Only Patch 2 (visibility) is needed for v2.0.71+.
 
 ## Limitations
 
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.77
+4. **Version-specific:** Patterns are specific to v2.1.80
 
 ## Feature Request
 
@@ -779,8 +678,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-03-19
-**Claude Code Version:** 2.1.79
+**Last Updated:** 2025-12-09
+**Claude Code Version:** 2.1.80
 **Status:** ✅ Working
 
 ### Quick Reference

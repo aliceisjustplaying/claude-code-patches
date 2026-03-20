@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.79');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.80');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.79');
+console.log('Claude Code Thinking Visibility Patcher v2.1.80');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,87 +176,35 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking Visibility Patch (v2.1.31)
-// Forces thinking content to always render by setting isTranscriptMode to true
-// Note: In v2.0.71+, the separate banner function was removed - only this patch is needed
-// Note: In v2.1.2+, hideInTranscript property was added - we set it to false to always show
-// Note: In v2.1.17+, React memo cache is used for memoization
-// Note: In v2.1.22, minified variable names changed: H9->Y9, Ej1->iM1
-// Note: In v2.1.31, verbose parameter removed, variable names changed: Y9->K9, iM1->_j6, D->j, H removed, T->V (meaning changed), K[23]->q[21], etc.
-// Note: In v2.1.34, variable names changed: K9->I5, _j6->sD6, j->M, V->Z, G<->P swapped
-// Note: In v2.1.37, variable names changed: I5->b5, sD6->Mj6, M->j
-// Note: In v2.1.39, variable names changed: b5->F5, Mj6->pM6, P->G, G->W, memo indices shifted q[21-25]->q[22-26]
-// Note: In v2.1.42, variable names changed: pM6->dW6, j->D
-// Note: In v2.1.56, guard changed to 3 checks (!X&&!V&&!_), added verbose:_ prop, F5->g5, dW6->Kf1, memo now 6 slots q[22-27]
-// Note: In v2.1.59, variable names changed: g5->c5, Kf1->JT1, X->D, V->f, N->V, Z->G
-// Note: In v2.1.62, component name changed: JT1->jT1 (case change only)
-// Note: In v2.1.63, guard reverted to 2 checks (!X&&!_), c5->U5, jT1->qN1, V->f, v->N, D->X, memo q[22-27]->q[21-26] (5 slots)
-// Note: In v2.1.69, X->D, N->v, U5->d5, qN1->LN1, memo q[21-26]->q[22-27] (6 slots again)
-// Note: In v2.1.71, d5->o5, LN1->PL1, v->V, G->Z in hideInTranscript check
-// Note: In v2.1.72, o5->M5, PL1->gT1, _->w (verbose), V->v (memo temp)
-// Note: In v2.1.74, M5->G5, gT1->kv1, f<->G swap (hideInTranscript var), Z->f (hide check var)
-// Note: In v2.1.75, G5->v5, kv1->xv1, f->Z (hide check var reverted)
-// Note: In v2.1.76, v5->V3, xv1->_N1, G->f (hideInTranscript var)
-// Note: In v2.1.77, V3->E3, _N1->KN1, v->T (memo temp var)
-// Note: In v2.1.78, E3->T3, KN1->UN1, D->M (guard/isTranscriptMode var)
-// Note: In v2.1.79, T3->E3, UN1->fk8, M->D (guard/isTranscriptMode var reverted)
-//
-// IMPORTANT: redact-thinking beta header (v2.1.64+)
-// Starting in v2.1.64 (reverted in v2.1.66, re-introduced permanently in v2.1.69),
-// Claude Code sends a "redact-thinking-2026-02-12" beta header with API requests.
-// This tells the API to return thinking blocks with empty thinking text (signature
-// is preserved). The rendering patch works correctly but has nothing to display.
-// The header is added when ALL of these are true:
-//   1. Thinking is enabled
-//   2. Model supports interleaved thinking
-//   3. Not in verbose/transcript mode
-//   4. settings.showThinkingSummaries !== true (undefined counts as not true)
-//   5. Feature flag "tengu_quiet_hollow" is active (server-controlled)
-// Users MUST set "showThinkingSummaries": true in ~/.claude/settings.json to
-// prevent the redaction and allow this patch to actually display thinking content.
-// See: https://github.com/anthropics/claude-code/issues/31326
-const thinkingSearchPattern = 'case"thinking":{if(!D&&!w)return null;let f=D&&!(!Z||W===Z),T;if(q[22]!==Y||q[23]!==D||q[24]!==K||q[25]!==f||q[26]!==w)T=E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:D,verbose:w,hideInTranscript:f}),q[22]=Y,q[23]=D,q[24]=K,q[25]=f,q[26]=w,q[27]=T;else T=q[27];return T}';
-const thinkingReplacement = 'case"thinking":{let f=!1,T;if(q[22]!==Y||q[23]!==!0||q[24]!==K||q[25]!==f||q[26]!==w)T=E3.createElement(fk8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:!1}),q[22]=Y,q[23]=!0,q[24]=K,q[25]=f,q[26]=w,q[27]=T;else T=q[27];return T}';
+// Patch 1: Thinking banner removal (v2.1.80)
+// Note: In v2.1.80 the banner function is `vo4`, which renders the inline "✻ Thinking…" label.
+const bannerSearchPattern = 'function vo4(A){let q=_6(3),{addMargin:K}=A,_=(K===void 0?!1:K)?1:0,z;if(q[0]===Symbol.for("react.memo_cache_sentinel"))z=Sg1.default.createElement(T,{dimColor:!0,italic:!0},"✻ Thinking…"),q[0]=z;else z=q[0];let w;if(q[1]!==_)w=Sg1.default.createElement(B,{marginTop:_},z),q[1]=_,q[2]=w;else w=q[2];return w}';
+const bannerReplacement = 'function vo4(A){return null}';
 
-// Check if showThinkingSummaries is set in settings.json (required since v2.1.64)
-function checkShowThinkingSummaries() {
-  const settingsPaths = [
-    path.join(os.homedir(), '.claude', 'settings.json'),
-    path.join(os.homedir(), '.config', 'claude', 'settings.json'),
-  ];
-  for (const settingsPath of settingsPaths) {
-    try {
-      if (fs.existsSync(settingsPath)) {
-        const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-        if (settings.showThinkingSummaries === true) return true;
-      }
-    } catch (e) {
-      // ignore parse errors
-    }
-  }
-  return false;
+// Patch 2: Thinking Visibility (v2.1.80)
+// Note: In v2.1.80 the renderer is `zE8`, with createElement namespace `R3`, component `zE8`, and `hideInTranscript` still enforced.
+const thinkingSearchPattern = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==Y||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=R3.createElement(zE8,{addMargin:Y,param:K,isTranscriptMode:X,verbose:w,hideInTranscript:G}),q[31]=Y,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
+const thinkingReplacement = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==Y||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=R3.createElement(zE8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=Y,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
+
+let patch1Applied = false;
+let patch2Applied = false;
+
+// Check if patches can be applied
+console.log('Checking patches...\n');
+
+console.log('Patch 1: ZT2 banner removal');
+if (content.includes(bannerSearchPattern)) {
+  patch1Applied = true;
+  console.log('  ✅ Pattern found - ready to apply');
+} else if (content.includes(bannerReplacement)) {
+  console.log('  ⚠️  Already applied');
+} else {
+  console.log('  ❌ Pattern not found - may need update for newer version');
 }
 
-const hasShowThinkingSummaries = checkShowThinkingSummaries();
-if (!hasShowThinkingSummaries) {
-  console.log('⚠️  WARNING: "showThinkingSummaries" is not set to true in ~/.claude/settings.json');
-  console.log('   Since v2.1.64, Claude Code sends a "redact-thinking" beta header that tells');
-  console.log('   the API to strip thinking text from responses. Without this setting, the');
-  console.log('   patch will apply but you will see NO thinking content.');
-  console.log('');
-  console.log('   Fix: Add to ~/.claude/settings.json:');
-  console.log('     "showThinkingSummaries": true');
-  console.log('');
-}
-
-let patchApplied = false;
-
-// Check if patch can be applied
-console.log('Checking patch...\n');
-
-console.log('Thinking visibility patch:');
+console.log('\nPatch 2: Thinking visibility');
 if (content.includes(thinkingSearchPattern)) {
-  patchApplied = true;
+  patch2Applied = true;
   console.log('  ✅ Pattern found - ready to apply');
 } else if (content.includes(thinkingReplacement)) {
   console.log('  ⚠️  Already applied');
@@ -267,18 +215,20 @@ if (content.includes(thinkingSearchPattern)) {
 // Dry run mode - just preview
 if (isDryRun) {
   console.log('\n📋 DRY RUN - No changes will be made\n');
-  console.log(`Thinking visibility patch: ${patchApplied ? 'WOULD APPLY' : 'SKIP'}`);
+  console.log('Summary:');
+  console.log(`- Patch 1 (banner): ${patch1Applied ? 'WOULD APPLY' : 'SKIP'}`);
+  console.log(`- Patch 2 (visibility): ${patch2Applied ? 'WOULD APPLY' : 'SKIP'}`);
 
-  if (patchApplied) {
-    console.log('\nRun without --dry-run to apply patch.');
+  if (patch1Applied || patch2Applied) {
+    console.log('\nRun without --dry-run to apply patches.');
   }
   process.exit(0);
 }
 
-// Apply patch
-if (!patchApplied) {
-  console.error('\n❌ No patch to apply');
-  console.error('Patch may already be applied or version may have changed.');
+// Apply patches
+if (!patch1Applied && !patch2Applied) {
+  console.error('\n❌ No patches to apply');
+  console.error('Patches may already be applied or version may have changed.');
   console.error('Run with --dry-run to see details.');
   process.exit(1);
 }
@@ -290,16 +240,28 @@ if (!fs.existsSync(backupPath)) {
   console.log(`✅ Backup created: ${backupPath}`);
 }
 
-console.log('\nApplying patch...');
+console.log('\nApplying patches...');
 
-content = content.replace(thinkingSearchPattern, thinkingReplacement);
-console.log('✅ Thinking visibility patch applied');
+// Apply Patch 1
+if (patch1Applied) {
+  content = content.replace(bannerSearchPattern, bannerReplacement);
+  console.log('✅ Patch 1 applied: ZT2 function now returns null');
+}
+
+// Apply Patch 2
+if (patch2Applied) {
+  content = content.replace(thinkingSearchPattern, thinkingReplacement);
+  console.log('✅ Patch 2 applied: thinking content forced visible');
+}
 
 // Write file
 console.log('\nWriting patched file...');
 fs.writeFileSync(targetPath, content, 'utf8');
-console.log('✅ File written successfully');
+console.log('✅ File written successfully\n');
 
-console.log('\n🎉 Patch applied! Please restart Claude Code for changes to take effect.');
+console.log('Summary:');
+console.log(`- Patch 1 (banner): ${patch1Applied ? 'APPLIED' : 'SKIPPED'}`);
+console.log(`- Patch 2 (visibility): ${patch2Applied ? 'APPLIED' : 'SKIPPED'}`);
+console.log('\n🎉 Patches applied! Please restart Claude Code for changes to take effect.');
 console.log('\nTo restore original behavior, run: node patch-thinking.js --restore');
 process.exit(0);
