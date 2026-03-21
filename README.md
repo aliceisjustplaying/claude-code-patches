@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.80 (Updated 2025-12-09)
+**Current Version:** Claude Code 2.1.81 (Updated 2026-03-21)
 
 ## Required Setting (v2.1.64+)
 
@@ -187,7 +187,7 @@ case"thinking":
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.80 installed
+- Claude Code v2.1.81 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -295,7 +295,7 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patches are applied (for v2.1.80):
+Check if patches are applied (for v2.1.81):
 
 ```bash
 # Check vo4 patch
@@ -411,7 +411,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~3,600+ lines, ~9+ MB (heavily minified)
-- **Version:** Claude Code 2.1.80
+- **Version:** Claude Code 2.1.81
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -490,7 +490,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.80
+4. **Version-specific:** Patterns are specific to v2.1.81
 
 ## Feature Request
 
@@ -708,8 +708,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2025-12-09
-**Claude Code Version:** 2.1.80
+**Last Updated:** 2026-03-21
+**Claude Code Version:** 2.1.81
 **Status:** ✅ Working
 
 ### Quick Reference
