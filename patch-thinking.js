@@ -182,7 +182,10 @@ const bannerReplacement = 'function vo4(){return null}';
 
 // Thinking content is redacted unless showThinkingSummaries is enabled
 const thinkingSearchPattern = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:X,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
-const thinkingReplacement = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
+const thinkingReplacement = 'case"thinking":{if(0)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
+
+// Handle re-patching from the broken replacement (guard intact but isTranscriptMode patched)
+const thinkingBrokenPattern = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
 
 let patch1Applied = false;
 let patch2Applied = false;
@@ -204,6 +207,9 @@ console.log('\nPatch 2: Thinking visibility');
 if (content.includes(thinkingSearchPattern)) {
   patch2Applied = true;
   console.log('  ✅ Pattern found - ready to apply');
+} else if (content.includes(thinkingBrokenPattern)) {
+  patch2Applied = true;
+  console.log('  ⚠️  Previous patch incomplete (guard not disabled) - will fix');
 } else if (content.includes(thinkingReplacement)) {
   console.log('  ⚠️  Already applied');
 } else {
@@ -215,7 +221,7 @@ if (isDryRun) {
   console.log('\n📋 DRY RUN - No changes will be made\n');
   console.log('Summary:');
   console.log(`- Patch 1 (banner): ${patch1Applied ? 'WOULD APPLY' : 'SKIP'}`);
-  console.log(`- Patch 2 (visibility): ${patch2Applied ? 'WOULD APPLY' : 'SKIP'}`);
+  console.log(`- Patch 2 (visibility): ${patch2Applied ? (content.includes(thinkingBrokenPattern) ? 'WOULD FIX (guard)' : 'WOULD APPLY') : 'SKIP'}`);
 
   if (patch1Applied || patch2Applied) {
     console.log('\nRun without --dry-run to apply patches.');
@@ -248,8 +254,13 @@ if (patch1Applied) {
 
 // Apply Patch 2
 if (patch2Applied) {
-  content = content.replace(thinkingSearchPattern, thinkingReplacement);
-  console.log('✅ Patch 2 applied: thinking content forced visible');
+  if (content.includes(thinkingBrokenPattern)) {
+    content = content.replace(thinkingBrokenPattern, thinkingReplacement);
+    console.log('✅ Patch 2 applied: fixed guard + thinking content forced visible');
+  } else {
+    content = content.replace(thinkingSearchPattern, thinkingReplacement);
+    console.log('✅ Patch 2 applied: guard disabled + thinking content forced visible');
+  }
 }
 
 // Write file
