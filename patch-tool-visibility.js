@@ -179,11 +179,21 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Tool Visibility Patch (v2.1.80)
-// Forces collapsed read/search tool groups to always render individual tool calls
-// instead of summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
-// This is achieved by forcing verbose:!0 in the collapsed_read_search renderer (co4)
-// so it always takes the verbose code path showing each tool call with file paths.
+// Tool Visibility Patch (v2.1.81)
+// Shows individual tool calls (with file paths/patterns) instead of collapsed
+// summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
+//
+// 4-site patch strategy:
+//   1. _t4 verbose branch: force the if-condition to always enter the verbose
+//      branch (which renders individual tool calls via ay_), while preserving
+//      the original verbose prop value (_) for passthrough.
+//   2. _t4 -> ay_ call: pass verbose:_ so ay_ knows whether we're in
+//      transcript mode (verbose=true) or normal mode (verbose=false).
+//   3. ay_ destructuring: accept the new verbose prop as VB.
+//   4. ay_ renderToolResultMessage: use VB??!0 so results are condensed in
+//      normal mode (VB=false) but fully expanded in transcript mode (VB=true).
+//
+// Version history for collapsed_read_search case in oy_:
 // Note: In v2.1.42, the relevant variables in PyY are:
 //   F5=createElement namespace, yQ4=collapsed renderer component,
 //   A=message, H=inProgressToolUseIDs, O=shouldAnimate, w=verbose,
@@ -204,41 +214,85 @@ let content = fs.readFileSync(targetPath, 'utf8');
 // Note: In v2.1.79, T3->E3, bc4->_a4, N unchanged, prop vars and indices unchanged
 // Note: In v2.1.80, E3->R3, _a4->co4, N->k, tool list prop _->z
 // Note: In v2.1.81, R3->S3, co4->_t4, lookups var Y->_
-const toolVisSearchPattern = 'case"collapsed_read_search":{let k;if(q[82]!==$||q[83]!==W||q[84]!==_||q[85]!==K||q[86]!==j||q[87]!==z||q[88]!==O)k=S3.createElement(_t4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:O,tools:z,lookups:_,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=_,q[85]=K,q[86]=j,q[87]=z,q[88]=O,q[89]=k;else k=q[89];return k}';
-const toolVisReplacement = 'case"collapsed_read_search":{let k;if(q[82]!==$||q[83]!==W||q[84]!==_||q[85]!==K||q[86]!==j||q[87]!==z||q[88]!==O)k=S3.createElement(_t4,{message:K,inProgressToolUseIDs:$,shouldAnimate:j,verbose:!0,tools:z,lookups:_,isActiveGroup:W}),q[82]=$,q[83]=W,q[84]=_,q[85]=K,q[86]=j,q[87]=z,q[88]=O,q[89]=k;else k=q[89];return k}';
 
-let patchApplied = false;
+// Patch 1: Force _t4 verbose branch (always show individual tool calls)
+// Changes the if-condition from using _ (verbose prop) to !0 (always true)
+// so the verbose branch is always entered regardless of mode.
+// The _ variable retains its original value for passthrough to ay_.
+const patch1Search = ',[p]),_){let A6=[]';
+const patch1Replace = ',[p]),!0){let A6=[]';
 
-// Check if patch can be applied
-console.log('Checking patch...\n');
+// Patch 2: Pass verbose prop through _t4 -> ay_
+// Adds verbose:_ to the ay_ createElement call so ay_ receives the original
+// verbose value (false in normal mode, true in transcript mode).
+const patch2Search = 'createElement(ay_,{key:M6.id,content:M6,tools:Y,lookups:z,inProgressToolUseIDs:q,shouldAnimate:K,theme:P})';
+const patch2Replace = 'createElement(ay_,{key:M6.id,content:M6,tools:Y,lookups:z,inProgressToolUseIDs:q,shouldAnimate:K,theme:P,verbose:_})';
 
-console.log('Tool visibility patch:');
-if (content.includes(toolVisSearchPattern)) {
-  patchApplied = true;
-  console.log('  ✅ Pattern found - ready to apply');
-} else if (content.includes(toolVisReplacement)) {
-  console.log('  ⚠️  Already applied');
-} else {
-  console.log('  ❌ Pattern not found - may need update for newer version');
+// Patch 3: Accept verbose prop in ay_ component
+// Adds verbose:VB to the destructuring so it's available in the function body.
+const patch3Search = '{content:K,tools:_,lookups:Y,inProgressToolUseIDs:z,shouldAnimate:w,theme:O}=A';
+const patch3Replace = '{content:K,tools:_,lookups:Y,inProgressToolUseIDs:z,shouldAnimate:w,theme:O,verbose:VB}=A';
+
+// Patch 4: Use verbose prop in ay_ renderToolResultMessage
+// Changes hardcoded verbose:!0 to VB??!0 so results are condensed when
+// VB is false (normal mode) but fully expanded when VB is true (transcript).
+const patch4Search = 'J.renderToolResultMessage(k,[],{verbose:!0,tools:_,theme:O})';
+const patch4Replace = 'J.renderToolResultMessage(k,[],{verbose:VB??!0,tools:_,theme:O})';
+
+const patches = [
+  { name: 'Force _t4 verbose branch', search: patch1Search, replace: patch1Replace },
+  { name: 'Pass verbose to ay_', search: patch2Search, replace: patch2Replace },
+  { name: 'Accept verbose in ay_', search: patch3Search, replace: patch3Replace },
+  { name: 'Use verbose in ay_ results', search: patch4Search, replace: patch4Replace },
+];
+
+// Check which patches can be applied
+console.log('Checking patches...\n');
+
+let anyToApply = false;
+let allApplied = true;
+
+for (let i = 0; i < patches.length; i++) {
+  const p = patches[i];
+  console.log(`Patch ${i + 1}: ${p.name}`);
+  if (content.includes(p.search)) {
+    p.ready = true;
+    anyToApply = true;
+    allApplied = false;
+    console.log('  ✅ Pattern found - ready to apply');
+  } else if (content.includes(p.replace)) {
+    p.ready = false;
+    console.log('  ⚠️  Already applied');
+  } else {
+    p.ready = false;
+    allApplied = false;
+    console.log('  ❌ Pattern not found - may need update for newer version');
+  }
 }
 
 // Dry run mode - just preview
 if (isDryRun) {
   console.log('\n📋 DRY RUN - No changes will be made\n');
-  console.log(`Tool visibility patch: ${patchApplied ? 'WOULD APPLY' : 'SKIP'}`);
-
-  if (patchApplied) {
-    console.log('\nRun without --dry-run to apply patch.');
+  for (let i = 0; i < patches.length; i++) {
+    const p = patches[i];
+    console.log(`Patch ${i + 1} (${p.name}): ${p.ready ? 'WOULD APPLY' : 'SKIP'}`);
+  }
+  if (anyToApply) {
+    console.log('\nRun without --dry-run to apply patches.');
   }
   process.exit(0);
 }
 
-// Apply patch
-if (!patchApplied) {
-  console.error('\n❌ No patch to apply');
-  console.error('Patch may already be applied or version may have changed.');
-  console.error('Run with --dry-run to see details.');
-  process.exit(1);
+// Apply patches
+if (!anyToApply) {
+  if (allApplied) {
+    console.log('\n⚠️  All patches already applied.');
+  } else {
+    console.error('\n❌ No patches to apply');
+    console.error('Patches may already be applied or version may have changed.');
+    console.error('Run with --dry-run to see details.');
+  }
+  process.exit(allApplied ? 0 : 1);
 }
 
 // Create backup if it doesn't exist
@@ -248,10 +302,15 @@ if (!fs.existsSync(backupPath)) {
   console.log(`✅ Backup created: ${backupPath}`);
 }
 
-console.log('\nApplying patch...');
+console.log('\nApplying patches...');
 
-content = content.replace(toolVisSearchPattern, toolVisReplacement);
-console.log('✅ Tool visibility patch applied');
+for (let i = 0; i < patches.length; i++) {
+  const p = patches[i];
+  if (p.ready) {
+    content = content.replace(p.search, p.replace);
+    console.log(`✅ Patch ${i + 1} applied: ${p.name}`);
+  }
+}
 
 // Write file
 console.log('\nWriting patched file...');
