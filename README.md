@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.81 (Updated 2026-03-21)
+**Current Version:** Claude Code 2.1.83 (Updated 2026-03-25)
 
 ## Required Setting (v2.1.64+)
 
@@ -183,11 +183,15 @@ case"thinking":
 - v2.0.59: Changed to `F89` component, `u3` variable, checks `K` and `G`
 - v2.0.61: Changed to `T69` component, `A3` variable, checks `F` and `G`
 - v2.0.62: Changed to `X59` component, `J3` variable, checks `F` and `G`
+- v2.1.31+: Structural change to memo cache block with `q[]` indices
+- v2.1.80: `rE8` component, `S3` namespace, guard `if(!X&&!w)`, two-layer gating
+- v2.1.81: Same patterns as v2.1.80
+- v2.1.83: `uL8` component, `C5` namespace, guard `if(!P&&!w)`, memo `q[31-36]`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.81 installed
+- Claude Code v2.1.83 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -295,18 +299,13 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patches are applied (for v2.1.81):
+Check if patch is applied (for v2.1.83):
 
 ```bash
-# Check vo4 patch
-grep -n "function vo4" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check thinking visibility patch (should show if(0) instead of if(!P&&!w))
+grep -o 'case"thinking":{if(0)' $(npm root -g)/@anthropic-ai/claude-code/cli.js
 
-# Should show: function vo4(A){return null}
-
-# Check thinking visibility patch
-grep -n 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==Y||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=R3.createElement(zE8,{addMargin:Y,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G})' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should show a match with isTranscriptMode:!0 in the zE8 renderer
+# Should output: case"thinking":{if(0)
 ```
 
 ## Troubleshooting
@@ -411,7 +410,7 @@ The script automatically works with all Node.js version managers:
 
 ### File Structure
 - **cli.js:** ~3,600+ lines, ~9+ MB (heavily minified)
-- **Version:** Claude Code 2.1.81
+- **Version:** Claude Code 2.1.83
 - **Patches:** Non-invasive, minimal changes
 
 ### Installation Detection System
@@ -439,14 +438,17 @@ $(which claude) → resolve symlinks → find cli.js
 - Tracks all attempted paths for detailed error reporting
 - Cross-platform compatible (Windows, macOS, Linux)
 
-### Why Two Patches?
+### How It Works (Two-Layer Gating)
 
-1. **vo4 Function:** Controls the inline thinking banner
-2. **Thinking Renderer:** Controls whether the actual thinking text is displayed
+The `case"thinking"` handler has two independent layers that suppress thinking output:
 
-Both must be patched because they're separate systems:
-- Patching only vo4 → Inline thinking label remains visible
-- Patching only the renderer → Banner still shows "ctrl+o to show"
+1. **Layer 1 — Early return guard**: `if(!P&&!w)return null`
+   Returns null when not in transcript mode AND not verbose. The patch changes this to `if(0)return null` (dead code).
+
+2. **Layer 2 — Component prop**: `isTranscriptMode:P`
+   Controls whether the component shows content or collapses it. The patch changes this to `isTranscriptMode:!0`.
+
+Both layers must be fixed or thinking stays invisible. The banner function (ZT2/vo4 etc.) was deprecated since v2.0.71.
 
 ### Pattern Evolution Across Versions
 
@@ -490,7 +492,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.81
+4. **Version-specific:** Patterns are specific to v2.1.83
 
 ## Feature Request
 
@@ -708,8 +710,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-03-21
-**Claude Code Version:** 2.1.81
+**Last Updated:** 2026-03-25
+**Claude Code Version:** 2.1.83
 **Status:** ✅ Working
 
 ### Quick Reference

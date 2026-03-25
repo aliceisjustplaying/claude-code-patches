@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Thinking Visibility Patcher v2.1.81');
+  console.log('Claude Code Thinking Visibility Patcher v2.1.83');
   console.log('==============================================\n');
   console.log('Usage: node patch-thinking.js [options]\n');
   console.log('Options:');
@@ -27,7 +27,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Thinking Visibility Patcher v2.1.81');
+console.log('Claude Code Thinking Visibility Patcher v2.1.83');
 console.log('==============================================\n');
 
 // Helper function to safely execute shell commands
@@ -176,42 +176,56 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Thinking visibility patch
-const bannerSearchPattern = 'function vo4(){return[]}';
-const bannerReplacement = 'function vo4(){return null}';
+// Thinking Visibility Patch (v2.1.83)
+// Forces thinking content to always be visible in the CLI output.
+//
+// Two-layer gating (since v2.1.31+ memo cache structure):
+// The case"thinking" handler has TWO independent layers that both suppress
+// thinking output. The replacement must fix BOTH or thinking stays invisible:
+//
+//   Layer 1 — Early return guard: if(!P&&!w)return null
+//     Returns null when not in transcript mode (P=false) AND not verbose (w=false).
+//     Fix: Change to if(0)return null — makes it dead code.
+//
+//   Layer 2 — Component prop: isTranscriptMode:P
+//     Controls whether the thinking component shows content or is collapsed.
+//     Fix: Change to isTranscriptMode:!0
+//
+//   Layer 3 — hideInTranscript: v = P && !(!W||f===W)
+//     In transcript mode (P=true), hides all thinking blocks except the last.
+//     The uL8 component does `if(hideInTranscript) return null`.
+//     Fix: Change to v=!1 (always false) — never hide thinking.
+//
+// Note: Banner function (ZT2/vo4 etc.) was deprecated in v2.0.71.
+//
+// Version history:
+// v2.1.80: rE8, guard if(!X&&!w), S3.createElement, q[31-36], banner vo4
+// v2.1.81: same as v2.1.80
+// v2.1.83: uL8, guard if(!P&&!w), C5.createElement, q[31-36], no banner
 
-// Thinking content is redacted unless showThinkingSummaries is enabled
-const thinkingSearchPattern = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:X,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
-const thinkingReplacement = 'case"thinking":{if(0)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
+const thinkingSearchPattern = 'case"thinking":{if(!P&&!w)return null;let v=P&&!(!W||f===W),k;if(q[31]!==_||q[32]!==P||q[33]!==K||q[34]!==v||q[35]!==w)k=C5.createElement(uL8,{addMargin:_,param:K,isTranscriptMode:P,verbose:w,hideInTranscript:v}),q[31]=_,q[32]=P,q[33]=K,q[34]=v,q[35]=w,q[36]=k;else k=q[36];return k}';
 
-// Handle re-patching from the broken replacement (guard intact but isTranscriptMode patched)
-const thinkingBrokenPattern = 'case"thinking":{if(!X&&!w)return null;let G=X&&!(!f||W===f),v;if(q[31]!==_||q[32]!==X||q[33]!==K||q[34]!==G||q[35]!==w)v=S3.createElement(rE8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:G}),q[31]=_,q[32]=X,q[33]=K,q[34]=G,q[35]=w,q[36]=v;else v=q[36];return v}';
+const thinkingReplacement = 'case"thinking":{if(0)return null;let v=!1,k;if(q[31]!==_||q[32]!==P||q[33]!==K||q[34]!==v||q[35]!==w)k=C5.createElement(uL8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:v}),q[31]=_,q[32]=P,q[33]=K,q[34]=v,q[35]=w,q[36]=k;else k=q[36];return k}';
 
-let patch1Applied = false;
-let patch2Applied = false;
+// Broken-patch pattern: previous patch had guard fixed but hideInTranscript still active.
+// Re-running the patch will fix it.
+const thinkingBrokenPattern = 'case"thinking":{if(0)return null;let v=P&&!(!W||f===W),k;if(q[31]!==_||q[32]!==P||q[33]!==K||q[34]!==v||q[35]!==w)k=C5.createElement(uL8,{addMargin:_,param:K,isTranscriptMode:!0,verbose:w,hideInTranscript:v}),q[31]=_,q[32]=P,q[33]=K,q[34]=v,q[35]=w,q[36]=k;else k=q[36];return k}';
 
-// Check if patches can be applied
-console.log('Checking patches...\n');
+let patchApplied = false;
+let patchBrokenFixed = false;
 
-console.log('Patch 1: vo4 banner removal');
-if (content.includes(bannerSearchPattern)) {
-  patch1Applied = true;
-  console.log('  ✅ Pattern found - ready to apply');
-} else if (content.includes(bannerReplacement)) {
-  console.log('  ⚠️  Already applied');
-} else {
-  console.log('  ❌ Pattern not found - may need update for newer version');
-}
+// Check if patch can be applied
+console.log('Checking patch...\n');
 
-console.log('\nPatch 2: Thinking visibility');
+console.log('Patch: Thinking visibility (two-layer fix)');
 if (content.includes(thinkingSearchPattern)) {
-  patch2Applied = true;
+  patchApplied = true;
   console.log('  ✅ Pattern found - ready to apply');
-} else if (content.includes(thinkingBrokenPattern)) {
-  patch2Applied = true;
-  console.log('  ⚠️  Previous patch incomplete (guard not disabled) - will fix');
 } else if (content.includes(thinkingReplacement)) {
   console.log('  ⚠️  Already applied');
+} else if (content.includes(thinkingBrokenPattern)) {
+  patchBrokenFixed = true;
+  console.log('  ⚠️  Previous patch detected (hideInTranscript not disabled) - will fix');
 } else {
   console.log('  ❌ Pattern not found - may need update for newer version');
 }
@@ -220,17 +234,16 @@ if (content.includes(thinkingSearchPattern)) {
 if (isDryRun) {
   console.log('\n📋 DRY RUN - No changes will be made\n');
   console.log('Summary:');
-  console.log(`- Patch 1 (banner): ${patch1Applied ? 'WOULD APPLY' : 'SKIP'}`);
-  console.log(`- Patch 2 (visibility): ${patch2Applied ? (content.includes(thinkingBrokenPattern) ? 'WOULD FIX (guard)' : 'WOULD APPLY') : 'SKIP'}`);
+  console.log(`- Thinking visibility: ${patchApplied ? 'WOULD APPLY' : patchBrokenFixed ? 'WOULD FIX BROKEN PATCH' : 'SKIP'}`);
 
-  if (patch1Applied || patch2Applied) {
+  if (patchApplied || patchBrokenFixed) {
     console.log('\nRun without --dry-run to apply patches.');
   }
   process.exit(0);
 }
 
-// Apply patches
-if (!patch1Applied && !patch2Applied) {
+// Apply patch
+if (!patchApplied && !patchBrokenFixed) {
   console.error('\n❌ No patches to apply');
   console.error('Patches may already be applied or version may have changed.');
   console.error('Run with --dry-run to see details.');
@@ -244,23 +257,14 @@ if (!fs.existsSync(backupPath)) {
   console.log(`✅ Backup created: ${backupPath}`);
 }
 
-console.log('\nApplying patches...');
+console.log('\nApplying patch...');
 
-// Apply Patch 1
-if (patch1Applied) {
-  content = content.replace(bannerSearchPattern, bannerReplacement);
-  console.log('✅ Patch 1 applied: vo4 function now returns null');
-}
-
-// Apply Patch 2
-if (patch2Applied) {
-  if (content.includes(thinkingBrokenPattern)) {
-    content = content.replace(thinkingBrokenPattern, thinkingReplacement);
-    console.log('✅ Patch 2 applied: fixed guard + thinking content forced visible');
-  } else {
-    content = content.replace(thinkingSearchPattern, thinkingReplacement);
-    console.log('✅ Patch 2 applied: guard disabled + thinking content forced visible');
-  }
+if (patchApplied) {
+  content = content.replace(thinkingSearchPattern, thinkingReplacement);
+  console.log('✅ Patch applied: guard disabled (if(0)) + isTranscriptMode forced to !0');
+} else if (patchBrokenFixed) {
+  content = content.replace(thinkingBrokenPattern, thinkingReplacement);
+  console.log('✅ Broken patch fixed: guard disabled (if(0))');
 }
 
 // Write file
@@ -269,8 +273,7 @@ fs.writeFileSync(targetPath, content, 'utf8');
 console.log('✅ File written successfully\n');
 
 console.log('Summary:');
-console.log(`- Patch 1 (banner): ${patch1Applied ? 'APPLIED' : 'SKIPPED'}`);
-console.log(`- Patch 2 (visibility): ${patch2Applied ? 'APPLIED' : 'SKIPPED'}`);
-console.log('\n🎉 Patches applied! Please restart Claude Code for changes to take effect.');
+console.log(`- Thinking visibility: ${patchApplied ? 'APPLIED' : 'FIXED BROKEN PATCH'}`);
+console.log('\n🎉 Patch applied! Please restart Claude Code for changes to take effect.');
 console.log('\nTo restore original behavior, run: node patch-thinking.js --restore');
 process.exit(0);
