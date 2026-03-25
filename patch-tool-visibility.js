@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Tool Visibility Patcher v2.1.81');
+  console.log('Claude Code Tool Visibility Patcher v2.1.83');
   console.log('=============================================\n');
   console.log('Usage: node patch-tool-visibility.js [options]\n');
   console.log('Options:');
@@ -30,7 +30,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Tool Visibility Patcher v2.1.81');
+console.log('Claude Code Tool Visibility Patcher v2.1.83');
 console.log('=============================================\n');
 
 // Helper function to safely execute shell commands
@@ -179,71 +179,55 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Tool Visibility Patch (v2.1.81)
+// Tool Visibility Patch (v2.1.83)
 // Shows individual tool calls (with file paths/patterns) instead of collapsed
 // summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
 //
 // 4-site patch strategy:
-//   1. _t4 verbose branch: force the if-condition to always enter the verbose
-//      branch (which renders individual tool calls via ay_), while preserving
+//   1. Btq verbose branch: force the if-condition to always enter the verbose
+//      branch (which renders individual tool calls via mL_), while preserving
 //      the original verbose prop value (_) for passthrough.
-//   2. _t4 -> ay_ call: pass verbose:_ so ay_ knows whether we're in
+//   2. Btq -> mL_ call: pass verbose:_ so mL_ knows whether we're in
 //      transcript mode (verbose=true) or normal mode (verbose=false).
-//   3. ay_ destructuring: accept the new verbose prop as VB.
-//   4. ay_ renderToolResultMessage: use VB??!0 so results are condensed in
+//   3. mL_ destructuring: accept the new verbose prop as VB.
+//   4. mL_ renderToolResultMessage: use VB??!0 so results are condensed in
 //      normal mode (VB=false) but fully expanded in transcript mode (VB=true).
 //
-// Version history for collapsed_read_search case in oy_:
-// Note: In v2.1.42, the relevant variables in PyY are:
-//   F5=createElement namespace, yQ4=collapsed renderer component,
-//   A=message, H=inProgressToolUseIDs, O=shouldAnimate, w=verbose,
-//   Y=tools, q=lookups, M=isActiveGroup
-// Note: In v2.1.44, collapsed renderer changed: yQ4->SQ4
-// Note: In v2.1.56, F5->g5, SQ4->Mc4, H->_ (inProgressToolUseIDs), O->H (shouldAnimate)
-// Note: In v2.1.59, g5->c5, Mc4->Ni7
-// Note: In v2.1.62, pattern unchanged from v2.1.59
-// Note: In v2.1.63, c5->U5, Ni7->$r4, H->O (shouldAnimate)
-// Note: In v2.1.69, structural change to memo cache block, U5->d5, $r4->pt4, A->K (message), _->O (ids), O->j (anim), w->$ (verbose), Y->w (tools), q->Y (lookups), M->W (group)
-// Note: In v2.1.71, d5->o5, pt4->O7q, V->N, memo indices shifted q[78-85]->q[81-88]
-// Note: In v2.1.72, o5->M5, O7q->FQ4, O->$ (ids), $->O (verbose), w->_ (tools), memo indices shifted q[81-88]->q[82-89]
-// Note: In v2.1.74, M5->G5, FQ4->Nd4, N->V (memo temp var), prop vars and indices unchanged
-// Note: In v2.1.75, G5->v5, Nd4->Ed4, prop vars and indices unchanged
-// Note: In v2.1.76, v5->V3, Ed4->fc4, V->N (memo temp var), prop vars and indices unchanged
-// Note: In v2.1.77, V3->E3, fc4->Wd4, N unchanged, prop vars and indices unchanged
-// Note: In v2.1.78, E3->T3, Wd4->bc4, N unchanged, prop vars and indices unchanged
-// Note: In v2.1.79, T3->E3, bc4->_a4, N unchanged, prop vars and indices unchanged
-// Note: In v2.1.80, E3->R3, _a4->co4, N->k, tool list prop _->z
-// Note: In v2.1.81, R3->S3, co4->_t4, lookups var Y->_
+// Version history for collapsed_read_search renderer:
+// v2.1.81: _t4 -> ay_, verbose=_, context ,[p]),_){let A6=[]
+// v2.1.83: Btq -> mL_, verbose=_, context ,[U]),_){let t=[]
+//   ay_ -> mL_ (inner renderer), M6 -> J6 (content var), Y<->z (tools/lookups swapped),
+//   P -> D (theme in main), O -> $ (theme in inner), p -> U (useEffect dep), A6 -> t (array var)
 
-// Patch 1: Force _t4 verbose branch (always show individual tool calls)
+// Patch 1: Force Btq verbose branch (always show individual tool calls)
 // Changes the if-condition from using _ (verbose prop) to !0 (always true)
 // so the verbose branch is always entered regardless of mode.
-// The _ variable retains its original value for passthrough to ay_.
-const patch1Search = ',[p]),_){let A6=[]';
-const patch1Replace = ',[p]),!0){let A6=[]';
+// The _ variable retains its original value for passthrough to mL_.
+const patch1Search = ',[U]),_){let t=[]';
+const patch1Replace = ',[U]),!0){let t=[]';
 
-// Patch 2: Pass verbose prop through _t4 -> ay_
-// Adds verbose:_ to the ay_ createElement call so ay_ receives the original
+// Patch 2: Pass verbose prop through Btq -> mL_
+// Adds verbose:_ to the mL_ createElement call so mL_ receives the original
 // verbose value (false in normal mode, true in transcript mode).
-const patch2Search = 'createElement(ay_,{key:M6.id,content:M6,tools:Y,lookups:z,inProgressToolUseIDs:q,shouldAnimate:K,theme:P})';
-const patch2Replace = 'createElement(ay_,{key:M6.id,content:M6,tools:Y,lookups:z,inProgressToolUseIDs:q,shouldAnimate:K,theme:P,verbose:_})';
+const patch2Search = 'createElement(mL_,{key:J6.id,content:J6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D})';
+const patch2Replace = 'createElement(mL_,{key:J6.id,content:J6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D,verbose:_})';
 
-// Patch 3: Accept verbose prop in ay_ component
+// Patch 3: Accept verbose prop in mL_ component
 // Adds verbose:VB to the destructuring so it's available in the function body.
-const patch3Search = '{content:K,tools:_,lookups:Y,inProgressToolUseIDs:z,shouldAnimate:w,theme:O}=A';
-const patch3Replace = '{content:K,tools:_,lookups:Y,inProgressToolUseIDs:z,shouldAnimate:w,theme:O,verbose:VB}=A';
+const patch3Search = '{content:K,tools:_,lookups:z,inProgressToolUseIDs:Y,shouldAnimate:w,theme:$}=A';
+const patch3Replace = '{content:K,tools:_,lookups:z,inProgressToolUseIDs:Y,shouldAnimate:w,theme:$,verbose:VB}=A';
 
-// Patch 4: Use verbose prop in ay_ renderToolResultMessage
+// Patch 4: Use verbose prop in mL_ renderToolResultMessage
 // Changes hardcoded verbose:!0 to VB??!0 so results are condensed when
 // VB is false (normal mode) but fully expanded when VB is true (transcript).
-const patch4Search = 'J.renderToolResultMessage(k,[],{verbose:!0,tools:_,theme:O})';
-const patch4Replace = 'J.renderToolResultMessage(k,[],{verbose:VB??!0,tools:_,theme:O})';
+const patch4Search = 'J.renderToolResultMessage(k,[],{verbose:!0,tools:_,theme:$})';
+const patch4Replace = 'J.renderToolResultMessage(k,[],{verbose:VB??!0,tools:_,theme:$})';
 
 const patches = [
-  { name: 'Force _t4 verbose branch', search: patch1Search, replace: patch1Replace },
-  { name: 'Pass verbose to ay_', search: patch2Search, replace: patch2Replace },
-  { name: 'Accept verbose in ay_', search: patch3Search, replace: patch3Replace },
-  { name: 'Use verbose in ay_ results', search: patch4Search, replace: patch4Replace },
+  { name: 'Force Btq verbose branch', search: patch1Search, replace: patch1Replace },
+  { name: 'Pass verbose to mL_', search: patch2Search, replace: patch2Replace },
+  { name: 'Accept verbose in mL_', search: patch3Search, replace: patch3Replace },
+  { name: 'Use verbose in mL_ results', search: patch4Search, replace: patch4Replace },
 ];
 
 // Check which patches can be applied
