@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Tool Visibility Patcher v2.1.83');
+  console.log('Claude Code Tool Visibility Patcher v2.1.84');
   console.log('=============================================\n');
   console.log('Usage: node patch-tool-visibility.js [options]\n');
   console.log('Options:');
@@ -30,7 +30,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Tool Visibility Patcher v2.1.83');
+console.log('Claude Code Tool Visibility Patcher v2.1.84');
 console.log('=============================================\n');
 
 // Helper function to safely execute shell commands
@@ -179,55 +179,57 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Tool Visibility Patch (v2.1.83)
+// Tool Visibility Patch (v2.1.84)
 // Shows individual tool calls (with file paths/patterns) instead of collapsed
 // summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
 //
 // 4-site patch strategy:
 //   1. Btq verbose branch: force the if-condition to always enter the verbose
-//      branch (which renders individual tool calls via mL_), while preserving
+//      branch (which renders individual tool calls via Sx_), while preserving
 //      the original verbose prop value (_) for passthrough.
-//   2. Btq -> mL_ call: pass verbose:_ so mL_ knows whether we're in
+//   2. Btq -> Sx_ call: pass verbose:_ so Sx_ knows whether we're in
 //      transcript mode (verbose=true) or normal mode (verbose=false).
-//   3. mL_ destructuring: accept the new verbose prop as VB.
-//   4. mL_ renderToolResultMessage: use VB??!0 so results are condensed in
+//   3. Sx_ destructuring: accept the new verbose prop as VB.
+//   4. Sx_ renderToolResultMessage: use VB??!0 so results are condensed in
 //      normal mode (VB=false) but fully expanded in transcript mode (VB=true).
 //
 // Version history for collapsed_read_search renderer:
 // v2.1.81: _t4 -> ay_, verbose=_, context ,[p]),_){let A6=[]
 // v2.1.83: Btq -> mL_, verbose=_, context ,[U]),_){let t=[]
-//   ay_ -> mL_ (inner renderer), M6 -> J6 (content var), Y<->z (tools/lookups swapped),
-//   P -> D (theme in main), O -> $ (theme in inner), p -> U (useEffect dep), A6 -> t (array var)
+// v2.1.84: Btq -> Sx_, verbose=_, context ,[F]),_){let s=[]
+//   mL_ -> Sx_ (inner renderer), J6 -> $6 (content var), U -> F (useEffect dep),
+//   t -> s (array var), renderToolResultMessage now uses optional chaining (?.)
 
 // Patch 1: Force Btq verbose branch (always show individual tool calls)
 // Changes the if-condition from using _ (verbose prop) to !0 (always true)
 // so the verbose branch is always entered regardless of mode.
-// The _ variable retains its original value for passthrough to mL_.
-const patch1Search = ',[U]),_){let t=[]';
-const patch1Replace = ',[U]),!0){let t=[]';
+// The _ variable retains its original value for passthrough to Sx_.
+const patch1Search = ',[F]),_){let s=[]';
+const patch1Replace = ',[F]),!0){let s=[]';
 
-// Patch 2: Pass verbose prop through Btq -> mL_
-// Adds verbose:_ to the mL_ createElement call so mL_ receives the original
+// Patch 2: Pass verbose prop through Btq -> Sx_
+// Adds verbose:_ to the Sx_ createElement call so Sx_ receives the original
 // verbose value (false in normal mode, true in transcript mode).
-const patch2Search = 'createElement(mL_,{key:J6.id,content:J6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D})';
-const patch2Replace = 'createElement(mL_,{key:J6.id,content:J6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D,verbose:_})';
+const patch2Search = 'createElement(Sx_,{key:$6.id,content:$6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D})';
+const patch2Replace = 'createElement(Sx_,{key:$6.id,content:$6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D,verbose:_})';
 
-// Patch 3: Accept verbose prop in mL_ component
+// Patch 3: Accept verbose prop in Sx_ component
 // Adds verbose:VB to the destructuring so it's available in the function body.
 const patch3Search = '{content:K,tools:_,lookups:z,inProgressToolUseIDs:Y,shouldAnimate:w,theme:$}=A';
 const patch3Replace = '{content:K,tools:_,lookups:z,inProgressToolUseIDs:Y,shouldAnimate:w,theme:$,verbose:VB}=A';
 
-// Patch 4: Use verbose prop in mL_ renderToolResultMessage
+// Patch 4: Use verbose prop in Sx_ renderToolResultMessage
 // Changes hardcoded verbose:!0 to VB??!0 so results are condensed when
 // VB is false (normal mode) but fully expanded when VB is true (transcript).
-const patch4Search = 'J.renderToolResultMessage(k,[],{verbose:!0,tools:_,theme:$})';
-const patch4Replace = 'J.renderToolResultMessage(k,[],{verbose:VB??!0,tools:_,theme:$})';
+// Note: v2.1.84 uses optional chaining (?.) on renderToolResultMessage.
+const patch4Search = 'J.renderToolResultMessage?.(k,[],{verbose:!0,tools:_,theme:$})';
+const patch4Replace = 'J.renderToolResultMessage?.(k,[],{verbose:VB??!0,tools:_,theme:$})';
 
 const patches = [
   { name: 'Force Btq verbose branch', search: patch1Search, replace: patch1Replace },
-  { name: 'Pass verbose to mL_', search: patch2Search, replace: patch2Replace },
-  { name: 'Accept verbose in mL_', search: patch3Search, replace: patch3Replace },
-  { name: 'Use verbose in mL_ results', search: patch4Search, replace: patch4Replace },
+  { name: 'Pass verbose to Sx_', search: patch2Search, replace: patch2Replace },
+  { name: 'Accept verbose in Sx_', search: patch3Search, replace: patch3Replace },
+  { name: 'Use verbose in Sx_ results', search: patch4Search, replace: patch4Replace },
 ];
 
 // Check which patches can be applied

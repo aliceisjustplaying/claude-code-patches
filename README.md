@@ -22,7 +22,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.1.83 (Updated 2026-03-25)
+**Current Version:** Claude Code 2.1.84 (Updated 2026-03-26)
 
 ## Quick Start
 
@@ -156,12 +156,12 @@ case"thinking":
 - v2.1.31+: Structural change to memo cache block with `q[]` indices
 - v2.1.80: `rE8` component, `S3` namespace, guard `if(!X&&!w)`, two-layer gating
 - v2.1.81: Same patterns as v2.1.80
-- v2.1.83: `uL8` component, `C5` namespace, guard `if(!P&&!w)`, memo `q[31-36]`
+- v2.1.84: `uL8` component, `C5` namespace, guard `if(!P&&!w)`, memo `q[31-36]`
 
 ## Installation
 
 ### Prerequisites
-- Claude Code v2.1.83 installed
+- Claude Code v2.1.84 installed
 - Node.js (comes with Claude Code installation)
 
 ### Install Steps
@@ -269,7 +269,7 @@ Then restart Claude Code.
 
 ## Verification
 
-Check if patch is applied (for v2.1.83):
+Check if patch is applied (for v2.1.84):
 
 ```bash
 # Check thinking visibility patch (should show if(0) instead of if(!P&&!w))
@@ -462,7 +462,7 @@ When Claude Code updates, function names and component identifiers are regenerat
 1. **Breaks on updates:** Must re-run after `claude update`
 2. **Minified code:** Fragile, patterns may change with version updates
 3. **No official config:** This is a workaround until Anthropic adds a native setting
-4. **Version-specific:** Patterns are specific to v2.1.83
+4. **Version-specific:** Patterns are specific to v2.1.84
 
 ## Feature Request
 
@@ -680,8 +680,8 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2026-03-25
-**Claude Code Version:** 2.1.83
+**Last Updated:** 2026-03-26
+**Claude Code Version:** 2.1.84
 **Status:** ✅ Working
 
 ### Quick Reference
