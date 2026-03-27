@@ -13,7 +13,7 @@ const showHelp = args.includes('--help') || args.includes('-h');
 
 // Display help
 if (showHelp) {
-  console.log('Claude Code Tool Visibility Patcher v2.1.84');
+  console.log('Claude Code Tool Visibility Patcher v2.1.85');
   console.log('=============================================\n');
   console.log('Usage: node patch-tool-visibility.js [options]\n');
   console.log('Options:');
@@ -30,7 +30,7 @@ if (showHelp) {
   process.exit(0);
 }
 
-console.log('Claude Code Tool Visibility Patcher v2.1.84');
+console.log('Claude Code Tool Visibility Patcher v2.1.85');
 console.log('=============================================\n');
 
 // Helper function to safely execute shell commands
@@ -179,57 +179,61 @@ if (!fs.existsSync(targetPath)) {
 
 let content = fs.readFileSync(targetPath, 'utf8');
 
-// Tool Visibility Patch (v2.1.84)
+// Tool Visibility Patch (v2.1.85)
 // Shows individual tool calls (with file paths/patterns) instead of collapsed
 // summaries like "Searched for 2 patterns, read 1 file (ctrl+o to expand)".
 //
-// 4-site patch strategy:
-//   1. Btq verbose branch: force the if-condition to always enter the verbose
-//      branch (which renders individual tool calls via Sx_), while preserving
-//      the original verbose prop value (_) for passthrough.
-//   2. Btq -> Sx_ call: pass verbose:_ so Sx_ knows whether we're in
-//      transcript mode (verbose=true) or normal mode (verbose=false).
-//   3. Sx_ destructuring: accept the new verbose prop as VB.
-//   4. Sx_ renderToolResultMessage: use VB??!0 so results are condensed in
+// 4-site patch strategy (v2.1.85):
+//   Gpz passes verbose:N (where N=w||P) to IKK. IKK checks if(z) to decide
+//   expanded vs collapsed. fpz (inner renderer) hardcodes verbose:!0 in
+//   renderToolResultMessage. The patch forces IKK's verbose branch while
+//   threading the original verbose value to fpz so renderToolResultMessage
+//   gets false (condensed) in normal mode and true (expanded) in transcript.
+//
+//   1. IKK verbose branch: force if(z) → if(!0) so individual tool calls
+//      always render. z retains its original value for passthrough.
+//   2. IKK → fpz call: pass verbose:z so fpz receives the original verbose
+//      value (false=normal, true=transcript).
+//   3. fpz destructuring: accept the new verbose prop as VB.
+//   4. fpz renderToolResultMessage: use VB??!0 so results are condensed in
 //      normal mode (VB=false) but fully expanded in transcript mode (VB=true).
 //
 // Version history for collapsed_read_search renderer:
-// v2.1.81: _t4 -> ay_, verbose=_, context ,[p]),_){let A6=[]
-// v2.1.83: Btq -> mL_, verbose=_, context ,[U]),_){let t=[]
-// v2.1.84: Btq -> Sx_, verbose=_, context ,[F]),_){let s=[]
-//   mL_ -> Sx_ (inner renderer), J6 -> $6 (content var), U -> F (useEffect dep),
-//   t -> s (array var), renderToolResultMessage now uses optional chaining (?.)
+// v2.1.81: _t4 -> ay_, 4-site: force verbose branch, thread verbose through
+// v2.1.83: Btq -> mL_, 4-site: same approach, different var names
+// v2.1.84: Btq -> Sx_, 4-site: same approach, J6->$6, U->F, t->s
+// v2.1.85: Gpz -> IKK -> fpz, 4-site: IKK verbose check if(z), fpz inner
+//   renderer, F unchanged (useEffect dep), z=verbose var, _6=array var
 
-// Patch 1: Force Btq verbose branch (always show individual tool calls)
-// Changes the if-condition from using _ (verbose prop) to !0 (always true)
+// Patch 1: Force IKK verbose branch (always show individual tool calls)
+// Changes the if-condition from using z (verbose prop) to !0 (always true)
 // so the verbose branch is always entered regardless of mode.
-// The _ variable retains its original value for passthrough to Sx_.
-const patch1Search = ',[F]),_){let s=[]';
-const patch1Replace = ',[F]),!0){let s=[]';
+// The z variable retains its original value for passthrough to fpz.
+const patch1Search = ',[F]),z){let _6=[]';
+const patch1Replace = ',[F]),!0){let _6=[]';
 
-// Patch 2: Pass verbose prop through Btq -> Sx_
-// Adds verbose:_ to the Sx_ createElement call so Sx_ receives the original
+// Patch 2: Pass verbose prop through IKK -> fpz
+// Adds verbose:z to the fpz createElement call so fpz receives the original
 // verbose value (false in normal mode, true in transcript mode).
-const patch2Search = 'createElement(Sx_,{key:$6.id,content:$6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D})';
-const patch2Replace = 'createElement(Sx_,{key:$6.id,content:$6,tools:z,lookups:Y,inProgressToolUseIDs:q,shouldAnimate:K,theme:D,verbose:_})';
+const patch2Search = 'createElement(fpz,{key:J6.id,content:J6,tools:Y,lookups:$,inProgressToolUseIDs:K,shouldAnimate:_,theme:P})';
+const patch2Replace = 'createElement(fpz,{key:J6.id,content:J6,tools:Y,lookups:$,inProgressToolUseIDs:K,shouldAnimate:_,theme:P,verbose:z})';
 
-// Patch 3: Accept verbose prop in Sx_ component
+// Patch 3: Accept verbose prop in fpz component
 // Adds verbose:VB to the destructuring so it's available in the function body.
-const patch3Search = '{content:K,tools:_,lookups:z,inProgressToolUseIDs:Y,shouldAnimate:w,theme:$}=A';
-const patch3Replace = '{content:K,tools:_,lookups:z,inProgressToolUseIDs:Y,shouldAnimate:w,theme:$,verbose:VB}=A';
+const patch3Search = '{content:_,tools:z,lookups:Y,inProgressToolUseIDs:$,shouldAnimate:A,theme:O}=q';
+const patch3Replace = '{content:_,tools:z,lookups:Y,inProgressToolUseIDs:$,shouldAnimate:A,theme:O,verbose:VB}=q';
 
-// Patch 4: Use verbose prop in Sx_ renderToolResultMessage
+// Patch 4: Use verbose prop in fpz renderToolResultMessage
 // Changes hardcoded verbose:!0 to VB??!0 so results are condensed when
 // VB is false (normal mode) but fully expanded when VB is true (transcript).
-// Note: v2.1.84 uses optional chaining (?.) on renderToolResultMessage.
-const patch4Search = 'J.renderToolResultMessage?.(k,[],{verbose:!0,tools:_,theme:$})';
-const patch4Replace = 'J.renderToolResultMessage?.(k,[],{verbose:VB??!0,tools:_,theme:$})';
+const patch4Search = 'J.renderToolResultMessage?.(V,[],{verbose:!0,tools:z,theme:O})';
+const patch4Replace = 'J.renderToolResultMessage?.(V,[],{verbose:VB??!0,tools:z,theme:O})';
 
 const patches = [
-  { name: 'Force Btq verbose branch', search: patch1Search, replace: patch1Replace },
-  { name: 'Pass verbose to Sx_', search: patch2Search, replace: patch2Replace },
-  { name: 'Accept verbose in Sx_', search: patch3Search, replace: patch3Replace },
-  { name: 'Use verbose in Sx_ results', search: patch4Search, replace: patch4Replace },
+  { name: 'Force IKK verbose branch', search: patch1Search, replace: patch1Replace },
+  { name: 'Pass verbose to fpz', search: patch2Search, replace: patch2Replace },
+  { name: 'Accept verbose in fpz', search: patch3Search, replace: patch3Replace },
+  { name: 'Use verbose in fpz results', search: patch4Search, replace: patch4Replace },
 ];
 
 // Check which patches can be applied
